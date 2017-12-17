@@ -9,7 +9,9 @@
 <body>
 <div id='index'>
 	<h3>Index Page</h3>
-
+	<ol>
+		<li>4차 테스트</li> 
+	</ol>
 </div>
 
 </body>

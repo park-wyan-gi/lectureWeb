@@ -40,6 +40,37 @@ function attfileAppend(ev){
    }   
 }
 
+function attfileAppend2(){ //파일추가  Ver 2.0
+	var att = document.getElementById('attfile');
+	
+	var div = document.createElement("div");
+	var input = document.createElement("input");
+	input.setAttribute('type','file');
+	input.setAttribute('name', 'fileName' + cnt);
+	input.onclick = function(){
+		if(input.value ==''){
+			attfileAppend2();
+		}
+	}
+	
+	var button = document.createElement("input");
+	button.setAttribute('type', 'button');
+	button.setAttribute('value', 'x');
+	
+	button.onclick = function(ev){// 삭제
+		if(att.childNodes.length <=1) return;
+		var ele = ev.srcElement;
+		var p = ele.parentNode;
+		att.removeChild(p);
+	}
+	
+	div.appendChild(input);
+	div.appendChild(button);
+	att.appendChild(div);
+	cnt++;
+	
+}
+
 </script>
 
 </head>
@@ -68,6 +99,6 @@ function attfileAppend(ev){
       <input type='hidden' name='deep'         value="${obj.deep }"/>
       
 </form>
-<script>attfileAppend()</script>
+<script>attfileAppend2()</script>
 </body>
 </html>

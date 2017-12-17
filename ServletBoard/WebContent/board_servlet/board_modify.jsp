@@ -16,7 +16,7 @@
 <title>board_modify</title>
 <script>
 function start(){
-	attfileAppend();
+	attfileAppend2();
    var ff = document.frm_board;
    var url = "";
    
@@ -63,6 +63,37 @@ function attfileAppend(ev){
    	div.appendChild(br);
 	}   
 
+}
+
+function attfileAppend2(){ //파일추가  Ver 2.0
+	var att = document.getElementById('attfile');
+	
+	var div = document.createElement("div");
+	var input = document.createElement("input");
+	input.setAttribute('type','file');
+	input.setAttribute('name', 'fileName' + cnt);
+	input.onclick = function(){
+		if(input.value ==''){
+			attfileAppend2();
+		}
+	}
+	
+	var button = document.createElement("input");
+	button.setAttribute('type', 'button');
+	button.setAttribute('value', 'x');
+	
+	button.onclick = function(ev){// 삭제
+		if(att.childNodes.length <=1) return;
+		var ele = ev.srcElement;
+		var p = ele.parentNode;
+		att.removeChild(p);
+	}
+	
+	div.appendChild(input);
+	div.appendChild(button);
+	att.appendChild(div);
+	cnt++;
+	
 }
 
 </script>

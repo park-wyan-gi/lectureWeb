@@ -41,7 +41,7 @@ a{ text-decoration: none;}
 </head>
 <body>
 <div id='tri_header'>
-   <span>My Home Page...</span>
+   <span>My Home Page...(Ver 1.2)</span>
 	<div id='menu'>
          <a href='index.jsp' >Home</a> 
          <a href='list.do' >게시판(Servlet)</a> 

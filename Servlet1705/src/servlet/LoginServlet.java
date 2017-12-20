@@ -14,6 +14,8 @@ import member.MemberDao;
 import member.MemberVo;
 
 public class LoginServlet extends HttpServlet{
+	RequestDispatcher dispatcher;
+	String url = "index.jsp?inc=./board/";
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
@@ -45,7 +47,8 @@ public class LoginServlet extends HttpServlet{
 			session.setAttribute("sId", mid);
 
 			//처리된 결과를 받을 페이지
-			resp.sendRedirect("../index.jsp");
+			resp.sendRedirect("../list.do");
+			
 		}else{
 			pw.print("login fail...");
 		}

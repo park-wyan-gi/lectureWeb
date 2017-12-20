@@ -56,10 +56,9 @@
 </div>
 <script>
 	var frm = document.frm_brd;
-	var url = 'index.jsp?inc=./board/';
 	
 	frm.btnList.onclick =function(){
-		frm.action = url + 'list.jsp';
+		frm.action = "list.do";
 		frm.submit();
 	}
 	frm.btnSave.onclick = function(){

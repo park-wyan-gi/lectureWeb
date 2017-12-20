@@ -2,6 +2,8 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import board.BoardDao;
+import board.BoardVo;
 
 public class BoardServlet extends HttpServlet{
 	String url = "index.jsp?inc=./board/";
@@ -28,10 +31,9 @@ public class BoardServlet extends HttpServlet{
 		req.setCharacterEncoding("utf-8");
 		resp.setContentType("text/html;charset=utf-8");
 
-		PrintWriter pw = resp.getWriter();
-		//pw.print("ok.......박원기");
 		
 		String uri= req.getRequestURI();
+		//System.out.println(uri);
 		
 		dao = new BoardDao();
 		
@@ -46,9 +48,79 @@ public class BoardServlet extends HttpServlet{
 			
 			dispatcher = req.getRequestDispatcher(url + "insert_result.jsp");
 			dispatcher.forward(req, resp);
+			
+			
+		}else if(uri.lastIndexOf("list.do") >=0 || uri.equals("/Servlet1705/") ){
+			String findStr = "";
+			int nowPage = 1;
+			if(req.getParameter("findStr") != null){
+				findStr = req.getParameter("findStr");
+			}
+			if(req.getParameter("nowPage") != null){
+				nowPage = Integer.parseInt(req.getParameter("nowPage"));
+			}
+			
+			List<BoardVo> list = dao.select(findStr, nowPage);
+			
+			req.setAttribute("list", list);
+			req.setAttribute("dao", dao);
+			
+			dispatcher = req.getRequestDispatcher(url + "list.jsp");
+			dispatcher.forward(req, resp);
+			
+			
+		}else if(uri.lastIndexOf("view.do") >=0){
+			int serial = Integer.parseInt(req.getParameter("serial"));
+			BoardVo vo = dao.selectOne(serial);
+			
+			req.setAttribute("vo", vo);
+			
+			dispatcher = req.getRequestDispatcher(url + "view.jsp");
+			dispatcher.forward(req, resp);
+			
+		}else if(uri.indexOf("modify.do") >=0){
+			int serial = Integer.parseInt(req.getParameter("serial"));
+			BoardVo vo = dao.selectOne(serial);
+			req.setAttribute("vo",vo);
+			
+			dispatcher = req.getRequestDispatcher(url + "modify.jsp");
+			dispatcher.forward(req, resp);
+			
+		}else if(uri.indexOf("modifyR.do") >=0){
+			Map<String, Object> map = dao.modify(req);
+			
+			req.setAttribute("rMap", map);
+			
+			dispatcher = req.getRequestDispatcher(url + "modify_result.jsp");
+			dispatcher.forward(req, resp);
+			
+		}else if(uri.indexOf("repl.do") >=0){
+			int grp = Integer.parseInt(req.getParameter("grp"));
+			String deep = req.getParameter("deep");
+			
+			req.setAttribute("grp", grp);
+			req.setAttribute("deep", deep);
+			
+			dispatcher = req.getRequestDispatcher(url + "repl.jsp");
+			dispatcher.forward(req, resp);
+			
+			
+		}else if(uri.indexOf("replR.do") >=0){
+			Map<String, Object> map = dao.repl(req);
+			req.setAttribute("rMap", map);
+			
+			dispatcher = req.getRequestDispatcher(url + "repl_result.jsp");
+			dispatcher.forward(req, resp);
+			
+		}else if(uri.indexOf("deleteR.do") >=0){
+			int serial = Integer.parseInt(req.getParameter("serial"));
+			String rs = dao.delete(serial);
+			req.setAttribute("rs",rs);
+			
+			dispatcher = req.getRequestDispatcher(url + "delete_result.jsp");
+			dispatcher.forward(req, resp);
 		}
 		
-	
 	
 	
 	}

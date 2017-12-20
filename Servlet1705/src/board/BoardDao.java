@@ -20,7 +20,8 @@ import db.DBConn;
 
 public class BoardDao {
 	String sDirectory = 
-			"C:/Users/JHTA/workspace_lecture/Servlet1705/WebContent/download/";
+			"C:/Users/JHTA/git/lectureWeb/Servlet1705/WebContent/download/";
+	         
 	int    mSize = 1024*100000;
 	
 	Connection conn;
@@ -28,7 +29,7 @@ public class BoardDao {
 	ResultSet rs;
 	
 	// 페이지 분리와 관련된 변수들
-	int listSize = 20; // 한페이지에 표시될 데이터의 갯수
+	int listSize = 3; // 한페이지에 표시될 데이터의 갯수
 	int blockSize = 4; // 한블럭당 표시될 페이지 번수의 갯수
 	int totSize = 0; // 검색된 결과의 전체 갯수
 	int totPage = 0; // 전체 페이지 수

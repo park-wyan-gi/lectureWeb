@@ -9,20 +9,21 @@
 <body>
 <div id='delete_result'>
 	<h3>삭제 결과</h3>
-	<%
-		String serial = request.getParameter("serial");
-		out.print(serial);
-	%>
+	
+	<font color='red'>${rs }</font>
+
 	<form name='frm_brd' method='post' action=''>
 		<input type='button' name='btnList' value='목록으로'/>
+		
+		<input type='text' name='nowPage' value='${param.nowPage }'/>
+		<input type='text' name='findStr' value='${param.findStr }'/>
 	</form>
 </div>
 
 <script>
 	var frm = document.frm_brd;
-	var url = 'index.jsp?inc=./board/';
 	frm.btnList.onclick = function(){
-		frm.action = url + 'list.jsp';
+		frm.action = 'list.do';
 		frm.submit();
 	}
 

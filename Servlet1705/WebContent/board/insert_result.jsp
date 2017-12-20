@@ -9,14 +9,7 @@
 <body>
 <div id='insert_result'>
 	<h3>자료 입력 결과</h3>
-	<%
-		String worker = request.getParameter("worker");
-		String subject = request.getParameter("subject");
 	
-	%>
-	<li>worker = <%=worker %>
-	<li>subject= <%=subject %>
-	<br/>
 	<font color='blue'>${msg }</font>
 	
 	<form name='frm_brd' method='post' action=''>
@@ -28,9 +21,8 @@
 
 <script>
 	var frm = document.frm_brd;
-	var url = 'index.jsp?inc=./board/';
 	frm.btnList.onclick = function(){
-		frm.action = url + 'list.jsp';
+		frm.action = 'list.do';
 		frm.submit();
 	}
 

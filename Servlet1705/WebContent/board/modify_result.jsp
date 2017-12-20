@@ -9,27 +9,28 @@
 <body>
 <div id='frm_mr'>
 	<h3>자료 수정 결과</h3>
-	<%
-		String serial = request.getParameter("serial");
-		out.print(serial);
-	%>
+	
+	<font color='blue'>${rMap['rs'] }</font>
+	<p/>
+	
 	<form name='frm_brd' method='post' action=''>
 		<input type='button' value='목록' name='btnList' id='btnList'/>
 		<input type='button' value='상세보기' name='btnView' id='btnView'/>
-		<input type='hidden' name='serial' value='<%=serial %>' />
+		
+		<input type='text' name='nowPage' value="${rMap['nowPage'] }" />
+		<input type='text' name='findStr' value="${rMap['findStr'] }" />
+		
 	</form>
 </div>
 <script>
 var frm = document.frm_brd;
-var url = 'index.jsp?inc=./board/';
-
 frm.btnList.onclick = function(){
-	frm.action = url + 'list.jsp';
+	frm.action = 'list.do';
 	frm.submit();
 }
 
 frm.btnView.onclick = function(){
-	frm.action = url + 'view.jsp';
+	frm.action = 'view.do';
 	frm.submit();
 }
 </script>

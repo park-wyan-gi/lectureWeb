@@ -29,7 +29,7 @@ public class BoardDao {
 	ResultSet rs;
 	
 	// 페이지 분리와 관련된 변수들
-	int listSize = 3; // 한페이지에 표시될 데이터의 갯수
+	int listSize = 20; // 한페이지에 표시될 데이터의 갯수
 	int blockSize = 4; // 한블럭당 표시될 페이지 번수의 갯수
 	int totSize = 0; // 검색된 결과의 전체 갯수
 	int totPage = 0; // 전체 페이지 수
@@ -220,7 +220,14 @@ public class BoardDao {
 			v.setSerial(rs.getInt("serial"));
 			v.setWorker(rs.getString("worker"));
 			v.setSubject(rs.getString("subject"));
-			v.setContent(rs.getString("content").replaceAll("\n", "<br/>"));
+			
+			if(rs.getString("content") != null){
+				v.setContent(rs.getString("content").replaceAll("\n", "<br/>"));
+			}else{
+				v.setContent("");
+			}
+			
+			
 			v.setMdate(rs.getDate("mdate").toString());
 			v.setHit(rs.getInt("hit"));
 			
@@ -442,6 +449,7 @@ public class BoardDao {
 			
 			conn.close();
 			
+			rMap.put("serial", serial);
 			rMap.put("findStr", findStr );
 			rMap.put("nowPage", nowPage);
 

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,12 +12,18 @@
 <body>
 <div id='repl_result'>
 	<h3>답변 저장 결과</h3>
-	<%
-		String serial = request.getParameter("serial");
-		out.print(serial);
-	%>	
-	<form name='frm_brd' method='post' action = ''>
-		<input type='button' value='목록으로' name='btnList'/>
+	
+	<font color='blue'>${rMap['rs'] }</font>
+	<p/>
+	
+	<form name='frm_brd' method='post' action=''>
+		<input type='button' value='목록'    name='btnList' id='btnList'/>
+		<input type='button' value='상세보기' name='btnView' id='btnView'/>
+		
+		<input type='hidden' name='nowPage' value="${rMap['nowPage'] }" />
+		<input type='hidden' name='findStr' value="${rMap['findStr'] }" />
+		<input type='hidden' name='serial'  value="${rMap['serial'] }" />
+		
 	</form>
 </div>
 

@@ -15,8 +15,8 @@
 	<form name='frm_brd' method='post' action=''>
 		<input type='button' name='btnList' value='목록으로'/>
 		
-		<input type='text' name='nowPage' value='${param.nowPage }'/>
-		<input type='text' name='findStr' value='${param.findStr }'/>
+		<input type='hidden' name='nowPage' value='${param.nowPage }'/>
+		<input type='hidden' name='findStr' value='${param.findStr }'/>
 	</form>
 </div>
 

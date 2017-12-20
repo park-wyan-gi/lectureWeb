@@ -7,12 +7,35 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<style>
+
+#view #frm_brd{
+	display:inline-block;
+	margin:0px auto;
+	text-align:left;
+}
+#view #content{
+	width:650px;
+	min-height:50px;
+	padding:20px;
+	background-color: #eeeeee;
+}
+#view >#frm_brd label{
+	display: inline-block;
+	width:70px;
+	text-align: right;
+	vertical-align: top;
+}
+#view #frm_brd{
+	text-align: left;
+}
+</style>
 </head>
 <body>
 <div id='view'>
 	<h3>자료실 상세 내용</h3>
 	
-	<form name='frm_brd' method='post' action=''>
+	<form name='frm_brd' method='post' action='' id='frm_brd'>
 	
 			<label>아 이 디</label>
 		<input type='text' size='6' name='worker' readOnly value='${vo.worker }'><br/>
@@ -20,7 +43,7 @@
 		<input type='text' size='60' name='subject' 
 				value='${vo.subject }' 	id='subject'/><br/>
 		<label></label>
-		<textarea rows="20" cols="70" name='content' id='content'>${vo.content }</textarea>
+		<div id='content'>${vo.content }</div>
 		<p/>
 			
 		<c:if test="${vo.attFile != null}">
@@ -41,11 +64,11 @@
 		<input type='button' value='삭제' name='btnDelete' id='btnDelete'/>
 		<input type='button' value='댓글' name='btnRepl'   id='btnRepl'/>
 		<input type='button' value='목록' name='btnList'   id='btnList'/>
-		<input type='text' name='serial'  value='${vo.serial }'/>
-		<input type='text' name='nowPage' value='${param.nowPage }'/>
-		<input type='text' name='grp'     value='${vo.grp }'/>
-		<input type='text' name='deep'    value='${vo.deep }'/>
-		<input type='text' name='findStr' value='${param.findStr }'/>
+		<input type='hidden' name='serial'  value='${vo.serial }'/>
+		<input type='hidden' name='nowPage' value='${param.nowPage }'/>
+		<input type='hidden' name='grp'     value='${vo.grp }'/>
+		<input type='hidden' name='deep'    value='${vo.deep }'/>
+		<input type='hidden' name='findStr' value='${param.findStr }'/>
 	</form>
 </div>
 

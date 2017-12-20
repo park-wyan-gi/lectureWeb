@@ -17,8 +17,9 @@
 		<input type='button' value='목록' name='btnList' id='btnList'/>
 		<input type='button' value='상세보기' name='btnView' id='btnView'/>
 		
-		<input type='text' name='nowPage' value="${rMap['nowPage'] }" />
-		<input type='text' name='findStr' value="${rMap['findStr'] }" />
+		<input type='hidden' name='nowPage' value="${rMap['nowPage'] }" />
+		<input type='hidden' name='findStr' value="${rMap['findStr'] }" />
+		<input type='hidden' name='serial' value="${rMap['serial'] }" />
 		
 	</form>
 </div>

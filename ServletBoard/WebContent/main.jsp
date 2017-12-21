@@ -10,6 +10,8 @@
 <title>tri_main</title>
 </head>
 <body>
-   <div id='center'>main</div>
+   <script>
+   	location.href='list.do';
+   </script>
 </body>
 </html>

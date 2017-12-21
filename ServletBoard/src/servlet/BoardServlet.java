@@ -24,7 +24,21 @@ public class BoardServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		
+		String url = req.getRequestURI();
 		doPost(req, resp);
+		/*
+		System.out.println(url);
+		RequestDispatcher dispatcher = null;
+		if(url.lastIndexOf("main.jsp") >=0){
+			System.out.println("main.jsp run.....");
+			dispatcher = req.getRequestDispatcher(
+					"index.jsp?inc=./board_servlet/board_list.jsp");
+			dispatcher.forward(req, resp);
+		}else{
+		}
+		*/
+		
 	
 	}
 
@@ -35,7 +49,10 @@ public class BoardServlet extends HttpServlet {
 			req.setCharacterEncoding("utf-8");
 			resp.setContentType("text/html;charset=utf-8");
 		
+			
 			String url = req.getRequestURI();
+			
+			
 			RequestDispatcher dispatcher = null;
 			String msg="";
 			

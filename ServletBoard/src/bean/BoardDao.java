@@ -16,7 +16,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 public class BoardDao {
 	Connection conn;
 	int size = 1024 * 1024 * 10;
-   String uploadPath = "C:/Users/jobtc/git/lectureWeb/ServletBoard/WebContent/upload/";
+	String uploadPath = "C:/Users/JHTA/git/lectureWeb/ServletBoard/WebContent/upload/";
 	String encoding = "utf-8";
    MultipartRequest multi = null;
    

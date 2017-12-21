@@ -9,6 +9,7 @@
 #login{
    text-align:right;
    font-size:10pt;
+   margin-bottom:4px;
 }
 </style>
 <script>
@@ -35,7 +36,7 @@ window.onload=function(){
 	%>
 	<form name='frm' method='post' action='LoginServlet2'>
 	   <label>아이디</label>
-	   <input type='text' name='id' value='aaaa'>   
+	   <input type='text' name='mid' value='aaaa'>   
 	   <label>암호</label>
 	   <input type='password' name='pwd' value='1111'>
 	

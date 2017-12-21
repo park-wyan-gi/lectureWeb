@@ -9,7 +9,7 @@
 <body>
 <%
 session.invalidate();
-pageContext.forward("index.jsp");
+pageContext.forward("main.jsp");
 
 %>
 </body>h

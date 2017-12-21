@@ -6,6 +6,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>tri_index.jsp</title>
 <style>
+body{
+	overflow-y:scroll;
+}
 #main{
    width:1000px;
    margin:auto;

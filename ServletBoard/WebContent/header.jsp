@@ -15,6 +15,8 @@
    box-shadow:4px 4px 6px #bbbbbb;
    width:1000px;
    height: 150px;
+   overflow: hidden;
+   position: relative;
 }
 #tri_header > span{
    font-size:24pt;
@@ -26,16 +28,20 @@
 a{ text-decoration: none;}
 #tri_header > #menu >a{
    display:table-cell;
-   width:120px;
+   width:150px;
    background-color: rgba(255,255,0, 0.7);
-   padding:4px;
+   padding:7px;
    box-sizing:border-box;
    font-weight:bold;
 }
-#menu{
-   position:relative;
+#tri_header > #menu >a:hover{
+	background-color: rgb(255,255,99);
+}
+
+#tri_header #menu{
+	position: absolute;
    top:110px;
-   left:750px;
+   right:10px;
 }
 </style>
 </head>
@@ -43,7 +49,7 @@ a{ text-decoration: none;}
 <div id='tri_header'>
    <span>My Home Page...</span>
 	<div id='menu'>
-         <a href='index.jsp' >Home</a> 
+         <a href='index.jsp?inc=intro.jsp' >Home</a> 
          <a href='list.do' >게시판(Servlet)</a> 
 	</div>
 </div>

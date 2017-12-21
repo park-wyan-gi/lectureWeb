@@ -38,7 +38,7 @@
    padding:3px;
 }
 .list:hover{ background-color: #eeeeee;}
-form{
+#board form{
    margin-bottom:5px;
 }
 form>#find{
@@ -84,53 +84,54 @@ function goPage(nowPage){
 </script>
 </head>
 <body>
-<h2>게시판 조회(Servlet)</h2>
-<form name='frm_board' method='post'>
-   <input type='button' name='btnInsert' value='입력'/>
-   <div id='find'>
-      <input type='text' size='30' name='findStr' value="${obj.findStr}">
-      <input type='button' name='btnFind' value='검색'>
-      <input type='hidden' name='serial' />
-      <input type='hidden' name='nowPage' value="${obj.nowPage }"/>
-   </div>
-</form>
-
-<div id='items'>
-   <span class='serial'>순번</span>
-   <span class='subject'>제목</span>
-   <span class='mdate'>작성일</span>
-   <span class='worker'>작성자</span>
-    <span class='hit'>조회수</span>
+<div id='board'>
+	<h2>게시판 조회(Servlet)</h2>
+	<form name='frm_board' method='post'>
+	   <input type='button' name='btnInsert' value='입력'/>
+	   <div id='find'>
+	      <input type='text' size='30' name='findStr' value="${obj.findStr}">
+	      <input type='button' name='btnFind' value='검색'>
+	      <input type='hidden' name='serial' />
+	      <input type='hidden' name='nowPage' value="${obj.nowPage }"/>
+	   </div>
+	</form>
+	
+	<div id='items'>
+	   <span class='serial'>순번</span>
+	   <span class='subject'>제목</span>
+	   <span class='mdate'>작성일</span>
+	   <span class='worker'>작성자</span>
+	    <span class='hit'>조회수</span>
+	</div>
+	
+	<c:forEach var="obj" items="${list }">
+	   <div class='list'>
+	      <span class='serial'>${obj.serial }</span>
+	      <span class='subject'>
+	         <a href='#' onclick="view('${obj.serial}')">${obj.subject }(${obj.cnt })</a>
+	      </span>
+	      <span class='mdate'>${obj.mDate }</span>
+	      <span class='worker'>${obj.worker }</span>
+	      <span class='hit'>${obj.hit }</span>      
+	   </div>
+	</c:forEach>
+	<div id="page">
+	   <c:if test="${page.startPage > 1 }">
+	      <input type='button' value="<<" onclick="goPage(1)">
+	      <input type='button' value="<"  onclick="goPage(${page.startPage-1 })">
+	   </c:if>
+	   
+	   <c:forEach var='p' begin="${page.startPage }" end="${page.endPage }">
+	      <input type='button' value='${p }' onclick="goPage(${p})">
+	   </c:forEach>
+	
+	   <c:if test="${page.totPage > page.endPage }" >   
+	      <input type='button' value=">" onclick="goPage(${page.endPage+1 })">
+	      <input type='button' value=">>" onclick="goPage(${page.totPage })">
+	   </c:if>
+	   
+	</div>
 </div>
-
-<c:forEach var="obj" items="${list }">
-   <div class='list'>
-      <span class='serial'>${obj.serial }</span>
-      <span class='subject'>
-         <a href='#' onclick="view('${obj.serial}')">${obj.subject }(${obj.cnt })</a>
-      </span>
-      <span class='mdate'>${obj.mDate }</span>
-      <span class='worker'>${obj.worker }</span>
-      <span class='hit'>${obj.hit }</span>      
-   </div>
-</c:forEach>
-<div id="page">
-   <c:if test="${page.startPage > 1 }">
-      <input type='button' value="<<" onclick="goPage(1)">
-      <input type='button' value="<"  onclick="goPage(${page.startPage-1 })">
-   </c:if>
-   
-   <c:forEach var='p' begin="${page.startPage }" end="${page.endPage }">
-      <input type='button' value='${p }' onclick="goPage(${p})">
-   </c:forEach>
-
-   <c:if test="${page.totPage > page.endPage }" >   
-      <input type='button' value=">" onclick="goPage(${page.endPage+1 })">
-      <input type='button' value=">>" onclick="goPage(${page.totPage })">
-   </c:if>
-   
-</div>
-
 
 <script>start()</script>
 </body>

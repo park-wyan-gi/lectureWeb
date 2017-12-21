@@ -92,7 +92,7 @@ function start(){
       <c:forEach var="item"  items="${obj.attfile }">
          <c:if test="${ item != 'null'}">
             <span style='display:inline-block;margin-bottom:20px'>
-               <img src='./upload/${item }' width="320px" /><br/>
+               <img src='./upload/${item }' width="220px" /><br/>
                ${item }
             </span>
          </c:if>

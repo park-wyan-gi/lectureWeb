@@ -5,15 +5,28 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<script src = './js/member.js'></script></head>
 <style>
 div{ border:0px solid #aaaaaa;}
 #index{
 	width:1100px;
 	margin:0 auto;
 }
-#index > #content{
-	width:100%;
-	text-align: center;
+#index > #center{
+	overflow: hidden;
+	vertical-align: top;
+}
+
+#index  #left{
+	background-color:#eeeeee;
+	width:194px;
+	vertical-align: top;
+}
+#index  #content{
+	width:900px;
+}
+#index #center > div {
+	display: inline-block;
 }
 </style>
 </head>
@@ -30,10 +43,13 @@ if(request.getParameter("inc") != null){
 	<%@include file="header.jsp" %>
 	
 	<h1><center>Servlet으로 만드는 자료실</center></h1>
-	
-	<div id='content'>
-		<jsp:include page="<%=inc %>" flush="true"/>
-	
+	<div id='center'>
+		<div id='left'>
+			<%@include file="./new_list.jsp" %>
+		</div>
+		<div id='content'>
+			<jsp:include page="<%=inc %>" flush="true"/>
+		</div>
 	</div>
 	<div>
 		<%@include file="footer.jsp" %>

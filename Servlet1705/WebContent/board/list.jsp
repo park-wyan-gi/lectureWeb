@@ -52,7 +52,7 @@
 }
 
 #brd_list .serial { width:50px; padding-right:20px; text-align: right}
-#brd_list .subject{ width:730px;}
+#brd_list .subject{ width:530px;}
 #brd_list .worker { width:100px;}
 #brd_list .mdate  { width:100px; text-align: center;}
 #brd_list .hit    { width:90px; text-align:right; padding-right:10px;}

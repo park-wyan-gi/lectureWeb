@@ -19,6 +19,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.catalina.tribes.group.InterceptorPayload;
+
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
@@ -63,6 +65,7 @@ public class BoardDao {
 	}
 	
 	public String insert(HttpServletRequest request){
+
 		String rs = "정상적으로 추가되었습니다.";
 		try{
 			MultipartRequest mr = new MultipartRequest(
@@ -106,19 +109,25 @@ public class BoardDao {
 					
 					r = ps.executeUpdate();
 					if(r<1) rs = "데이터 저장중 오류 발생";
-					
 					//thumb nail 만들기
 					pb = new ParameterBlock();
 					pb.add(sDirectory + sys);
 					op = JAI.create("fileload", pb);
+					
 					bi = op.getAsBufferedImage();
+					
 					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 					g2d = thumb.createGraphics();
 					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					
 					File file = new File(sDirectory + "thumb_" + sys);
 					ImageIO.write(thumb, "png", file);
 					
+					System.gc();
+					
 				}
+				
+			
 			}
 			if(r>0){
 				conn.commit();
@@ -127,7 +136,7 @@ public class BoardDao {
 			}
 			
 			conn.close();
-			
+	
 		}catch(Exception ex){
 			rs = "입력중 예외 발생";
 			try {
@@ -286,6 +295,7 @@ public class BoardDao {
 	
 	
 	public String delete(int serial){
+		
 		String r = "정상적으로 삭제됨";
 		String sql = "";
 		try{

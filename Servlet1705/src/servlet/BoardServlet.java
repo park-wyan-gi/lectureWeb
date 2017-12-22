@@ -120,8 +120,6 @@ public class BoardServlet extends HttpServlet{
 			dispatcher = req.getRequestDispatcher(url + "delete_result.jsp");
 			dispatcher.forward(req, resp);
 		}
-		
-	
 	
 	}
 	

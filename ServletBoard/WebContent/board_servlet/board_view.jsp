@@ -82,8 +82,9 @@ function start(){
    <h2 id='title'>게시판 상세보기</h2>
    <div><span class='label'>문서번호 </span> ${obj.serial}</div>
    <div><span class='label'>작성자 </span> <strong>${obj.worker }</strong> 
+   	<span> <a href='#' >${obj.email }</a></span>
       <span>[ ${obj.mDate }</li> ]</span>
-      <span> /  ${obj.hit }</span>
+      <span>  /조회수 : ${obj.hit }</span>
    </div>
    <div><span class='label'>제목 </span> ${obj.subject }</div>
    <div id='content'>${obj.content }</div>

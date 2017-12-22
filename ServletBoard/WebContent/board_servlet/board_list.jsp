@@ -55,8 +55,8 @@ form>#find{
 function start(){
    var ff = document.frm_board;
    ff.btnInsert.onclick = function(){
-      var url = 'index.jsp?inc=./board_servlet/board_input.jsp';
-      location.href = url;
+	   ff.action="insert.do";
+      ff.submit();
    }
    ff.btnFind.onclick=function(){
 	   ff.action="list.do";

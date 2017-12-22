@@ -349,7 +349,7 @@ public class BoardDao {
 		
 		try {
 		   //윈본글
-			sql = "select * from board where serial = ?";
+			sql = "select b.*, m.email from board b left join member m on b.worker=m.mid where serial = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, v.getSerial());
 			rs = ps.executeQuery();
@@ -363,6 +363,7 @@ public class BoardDao {
 				vo.setHit(rs.getInt("hit"));
 				vo.setGrp(rs.getInt("grp"));
 				vo.setDeep(rs.getString("deep"));
+				vo.setEmail(rs.getString("email"));
 
 				//첨부파일
 				sql = "select attfile, oriattfile from board_att where pserial=?";

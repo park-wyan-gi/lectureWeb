@@ -36,7 +36,7 @@ window.onload=function(){
 	%>
 	<form name='frm' method='post' action='LoginServlet2'>
 	   <label>아이디</label>
-	   <input type='text' name='mid' value='aaaa'>   
+	   <input type='text' name='mid' value='b4444'>   
 	   <label>암호</label>
 	   <input type='password' name='pwd' value='1111'>
 	

@@ -21,6 +21,7 @@ public class BoardVo{
 	List<String> attfile; //서버에 저장된 파일명
 	List<String> oriAttfile;//사용자가 선택한 원본 파일명
 	String[] deleteFile;
+	String  email;
 	
 	String findStr="";
 	int    nowPage;
@@ -35,6 +36,12 @@ public class BoardVo{
 		this.hit = h;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public int getCnt() {
       return cnt;
    }

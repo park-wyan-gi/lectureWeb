@@ -12,6 +12,7 @@ public class BoardVo {
 	String content = "";
 	String deep    = "";
 	String pwd     = "";
+	String email   = "";
 	
 	String findStr = "";
 	int    cnt; //첨부파일의 갯수
@@ -20,6 +21,14 @@ public class BoardVo {
 	
 	public BoardVo(){}
 	
+	
+
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public Map<String, String> getAttFile() {
 		return attFile;
 	}

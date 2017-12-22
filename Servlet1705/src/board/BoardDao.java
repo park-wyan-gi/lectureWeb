@@ -1,5 +1,8 @@
 package board;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.media.jai.JAI;
+import javax.media.jai.RenderedOp;
 import javax.servlet.http.HttpServletRequest;
 
 import com.oreilly.servlet.MultipartRequest;
@@ -40,6 +46,13 @@ public class BoardDao {
 	int endPage = 4; // 표시될 페이지의 끝번호
 	int startNo = 1; // 표시될 데이터의 시작번호
 	int endNo = 2; // 표시될 데이터의 끝번호
+	
+	//thumb nail 만들기 위한 변수
+	ParameterBlock pb;
+	RenderedOp op;
+	BufferedImage bi;
+	BufferedImage thumb;
+	Graphics2D g2d;
 	
 	public BoardDao() {
 		try{
@@ -93,6 +106,18 @@ public class BoardDao {
 					
 					r = ps.executeUpdate();
 					if(r<1) rs = "데이터 저장중 오류 발생";
+					
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					bi = op.getAsBufferedImage();
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
+					
 				}
 			}
 			if(r>0){
@@ -212,7 +237,9 @@ public class BoardDao {
 			ps.executeUpdate();
 			
 			//한건 읽음
-			sql = "select * from board where serial = ?";
+			sql = " select b.*, m.email email "
+				+ " from board b left join member m on b.worker = m.mid "
+				+ " where serial = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, serial);
 			rs = ps.executeQuery();
@@ -230,6 +257,7 @@ public class BoardDao {
 			
 			v.setMdate(rs.getDate("mdate").toString());
 			v.setHit(rs.getInt("hit"));
+			v.setEmail(rs.getString("email"));
 			
 			v.setGrp(rs.getInt("grp"));
 			v.setDeep(rs.getString("deep"));
@@ -277,6 +305,14 @@ public class BoardDao {
 				String file = sDirectory + rs.getString("attfile");
 				File f = new File(file);
 				if(f.exists()) f.delete();
+				
+				//thumb nail 삭제
+				file = sDirectory + "thumb_" + rs.getString("attfile");
+				f = new File(file);
+				if(f.exists()) f.delete();
+				
+				f = null;
+				
 			}
 			
 			//board_att 삭제(pserial)
@@ -351,6 +387,17 @@ public class BoardDao {
 					
 					r = ps.executeUpdate();
 					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
+					
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					bi = op.getAsBufferedImage();
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
 				}
 			}
 			if(r>0){
@@ -412,7 +459,10 @@ public class BoardDao {
 				if(delAtt != null){
 					for(int i=0 ; i<delAtt.length ; i++){
 						File f = new File(sDirectory + delAtt[i]);
-						if(f.exists()) f.delete();
+						f.deleteOnExit();
+						f = new File(sDirectory + "thumb_" + delAtt[i]);
+						f.deleteOnExit();
+						
 						sql = "delete from board_att where attfile = ?";
 						ps = conn.prepareStatement(sql);
 						ps.setString(1, delAtt[i]);
@@ -439,6 +489,17 @@ public class BoardDao {
 					
 					r = ps.executeUpdate();
 					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
+					
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					bi = op.getAsBufferedImage();
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
 				}
 			}
 			if(r>0){

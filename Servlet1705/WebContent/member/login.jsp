@@ -16,9 +16,9 @@
 <form name='frm_login' method='post' action='login' id='frm_login'>
 	<h2>로그인</h2>
 	<label>아이디</label>
-	<input type='text' name='mid' /><br/>
+	<input type='text' name='mid' value='b4444'/><br/>
 	<label>암 호</label>
-	<input type='password' name='pwd' />
+	<input type='password' name='pwd' value='1111'/>
 	<p/>
 	<input type='submit' value='로그인' />
 </form>

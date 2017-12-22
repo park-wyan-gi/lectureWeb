@@ -38,7 +38,9 @@
 	<form name='frm_brd' method='post' action='' id='frm_brd'>
 	
 			<label>아 이 디</label>
-		<input type='text' size='6' name='worker' readOnly value='${vo.worker }'><br/>
+		<input type='text' size='6' name='worker' readOnly value='${vo.worker }'>
+			<a href='#' onclick="mail('${vo.email}')">[${vo.email}] 메일 보내기</a>
+		<br/>
 		<label>제 목</label>
 		<input type='text' size='60' name='subject' 
 				value='${vo.subject }' 	id='subject'/><br/>
@@ -98,6 +100,11 @@ frm.btnList.onclick = function(){
 	frm.submit();
 }
 
+function mail(receiver){
+	var url = './email/mail_form.jsp?receiver=' + receiver;
+	var w=window.open(url,"w", 
+							"width=400px, height=500px, left=400px, top=200px");
+}
 </script>
 
 </body>

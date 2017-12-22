@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+/*
+작성 : pwg
+작성일 : 2013.6
+---------------------------
+자료실 css
+---------------------------
+*/
+
+.databank_body{
+	margin-bottom:30px;
+	font-size:12px;
+}
+
+#board_body>h1{
+	color:#0000ff;
+	font-size:21pt;
+	
+}

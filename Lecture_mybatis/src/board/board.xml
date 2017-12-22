@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper      
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"      
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+통합 계시판을 mybatis 유형으로 변경
+작업자 : pwg
+작업일 : 2014.7
+수정 : 2017.12 (테이블 변경 및 알고리즘 수정)
+ -->
+<mapper namespace="board">
+    <resultMap type="board.BoardVo" id="board_map">
+        <result property="serial"  column="serial"/>
+        <result property="worker"  column="worker"/>
+        <result property="subject" column="subject"/>
+        <result property="mdate"   column="mdate"/>
+        <result property="hit"     column="hit"/>
+        <result property="grp"     column="grp"/>
+        <result property="deep"    column="deep"/>
+        <result property="content" column="content"/>
+        <result property="part"    column="part"/>
+        <result property="email"    column="email"/>
+    </resultMap>
+    
+    
+    <select id='page' parameterType="board.BoardVo" resultType='java.lang.Integer'>
+		select NVL(count(*),0) from board
+		where(
+			worker like '%${find}%' or subject like '%${find}%' 
+			or content  like '%${find}%'
+		)
+		and part=#{part}
+    </select>
+     <select id='select' parameterType="board.BoardVo" resultMap='board_map'>
+     	select * from (
+		  select rownum no, a.* from( 
+			select * from board 
+			  where (worker like '%${find}%' or subject like '%${find}%' or  
+			  		 content  like'%${find}%' ) 
+			  and part=#{part} 
+			  order by grp desc, deep asc )a
+			  ) where no between ${startNo} and ${endNo}
+    </select>
+    
+
+    <update id="update_hit" parameterType="int">
+        update board set hit = hit+1 where serial=${serial}
+    </update>
+
+    <select id="view"  resultType="board.BoardVo" parameterType="int">
+        select b.serial, b.grp, b.deep, b.subject, b.content, b.mdate,
+               f.fileid, f.filename  
+        from board b left outer join board_att f 
+		on b.serial = f.pserial
+		where b.serial = ${serial}
+
+    </select>
+    
+    <select id='brd_list' resultType="board.BrdListVo">
+    	select * from board_att
+    </select>
+   
+   
+    <update id="update" parameterType="board.BoardVo">
+        update board set subject=#{subject} , content=#{content}
+        where pwd=#{pwd} and serial=#{serial}
+    </update>
+    <!-- 새로운 첨부가 발생했을 때 -->
+    <insert id='newFile' parameterType="board.BoardVo">
+ 		insert into board_att(serial, pserial, attfile, oriattfile)
+		values (seq_board_att.nextval, #{serial}, #{attfile}, #{oriattfile})
+    
+    </insert>
+    
+    
+    <insert id="insert" parameterType="board.BoardVo">
+		insert all
+		into board(serial, part, worker, subject, content, pwd, grp, deep, mdate,hit) 
+		values(seq_board.nextval, #{part}, #{worker}, #{subject}, #{content}, #{pwd} , 
+			   seq_board.currval, seq_board.currval, sysdate,100) 
+		<if test="filename != null" >
+			into boart_att(serial, serial, pserial,attfile, oriattfile) 
+			values(seq_board_att.nextval, seq_board.currval, #{attfile}, #{oriattfile})
+		</if>
+		select * from dual 
+    </insert>
+    
+    <delete id='delete' parameterType="board.BoardVo">
+        delete from board where serial=#{serial}
+    </delete>
+    
+    <delete id='fileDel' parameterType="board.BoardVo">
+    	delete from board_att where attfile=#{attfile}
+    </delete>  
+    
+    <insert id='repl' parameterType="board.BoardVo">
+    	insert all
+		into board(serial, part, worker, subject, content, pwd, grp, deep, mdate,hit) 
+		values(seq_board.nextval, #{part} ,#{worker}, #{subject}, #{content},
+				#{pwd}, #{grp}, #{deep} ||'-'|| seq_board.currval, sysdate,100)
+		<if test="filename != null" >
+			into board_att(serial, pserial, attfile, oriattfile) 
+			values(seq_board_att.nextval, seq_board.currval, #{attfile}, #{oriattfile})
+		</if>
+		select * from dual
+    	
+    </insert>
+    
+    
+</mapper>  

@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="begin">
+	<resultMap type="begin.BeginVo" id="beginMap">
+		<result property="mid" column="mid"/>
+		<result property="pwd" column="pwd"/>
+		<result property="phone" column="phone"/>
+		<result property="irum" column="irum"/>
+	</resultMap>
+
+	<select id='count' resultType='int'>
+		select count(*) cnt from student
+	</select>
+	
+	<select id='getPwd' resultType='String' parameterType='String'>
+		select irum from student where mid=#{aaa}
+	</select>
+	
+	<select id='login' resultType='boolean' parameterType='begin.BeginVo'>
+		select  
+			case when count(*) >0 then 1 
+			else 0
+			end
+			result
+		from student where mid=#{mid} and pwd=#{pwd}
+	
+	</select>
+	
+	<select id='view' parameterType='begin.BeginVo' resultType='begin.BeginVo'>
+		select *
+		from student where mid =#{mid} and pwd=#{pwd} 
+	</select>
+	
+	<select id='list' parameterType='begin.BeginVo' resultMap='beginMap'>
+		select * from student where mid like #{mid}
+	</select>
+</mapper>   

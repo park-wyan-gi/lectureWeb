@@ -33,9 +33,11 @@ a{ text-decoration: none;}
    padding:7px;
    box-sizing:border-box;
    font-weight:bold;
+   text-align: right;
 }
 #tri_header > #menu >a:hover{
 	background-color: rgb(255,255,99);
+
 }
 
 #tri_header #menu{
@@ -51,6 +53,7 @@ a{ text-decoration: none;}
 	<div id='menu'>
          <a href='index.jsp?inc=intro.jsp' >Home</a> 
          <a href='list.do' >게시판(Servlet)</a> 
+         <a href='index.jsp?inc=tableCreation.jsp'>테이블생성</a>
 	</div>
 </div>
 </body>

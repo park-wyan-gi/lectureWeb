@@ -1,534 +1,719 @@
 package bean;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.media.jai.JAI;
+import javax.media.jai.RenderedOp;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.catalina.tribes.group.InterceptorPayload;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
+import bean.DBConnect;
+
 public class BoardDao {
+	String sDirectory = 
+			"C:/Users/JHTA/git/lectureWeb/Servlet1705/WebContent/download/";
+	         
+	int    mSize = 1024*100000;
+	
 	Connection conn;
-	int size = 1024 * 1024 * 10;
-	String uploadPath = "C:/Users/JHTA/git/lectureWeb/ServletBoard/WebContent/upload/";
-	String encoding = "utf-8";
-   MultipartRequest multi = null;
-   
-   PageVo pVo;
-
-   PreparedStatement ps = null;
-   ResultSet rs = null;
-
+	PreparedStatement ps;
+	ResultSet rs;
+	
+	// 페이지 분리와 관련된 변수들
+	int listSize = 20; // 한페이지에 표시될 데이터의 갯수
+	int blockSize = 4; // 한블럭당 표시될 페이지 번수의 갯수
+	int totSize = 0; // 검색된 결과의 전체 갯수
+	int totPage = 0; // 전체 페이지 수
+	int totBlock = 0; // 전체 블럭수
+	int nowPage = 1; // 현재 페이지
+	int nowBlock = 1; // 현재 블럭
+	int startPage = 1; // 표시될 페이지의 시작번호
+	int endPage = 4; // 표시될 페이지의 끝번호
+	int startNo = 1; // 표시될 데이터의 시작번호
+	int endNo = 2; // 표시될 데이터의 끝번호
+	
+	//thumb nail 만들기 위한 변수
+	ParameterBlock pb;
+	RenderedOp op;
+	BufferedImage bi;
+	BufferedImage thumb;
+	Graphics2D g2d;
+	
 	public BoardDao() {
-	   try{
-   		conn = new DBConnect().getConn();
-   		
-   		checkTable();//테이블 및 시퀀스가 존재하지 않으면 자동 생성
-   		
-	   }catch(Exception ex){
-	      ex.printStackTrace();
-	   }
+		try{
+			conn = new DBConnect().getConn();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 	
-	public void checkTable() throws Exception{ 
-	   int cnt=0;
-      String sql = "";
-	 
-      sql = "select count(*) cnt from user_tables where table_name = upper('board')";
-      ps = conn.prepareStatement(sql);
-      rs = ps.executeQuery();
-      rs.next();
-      cnt = rs.getInt("cnt");
-      if(cnt <1){
-         //table 생성 및 시퀀스 생성
-         sql = "create table board("
-               + " serial integer, "
-               + " mdate date, "
-               + " worker varchar(20),"
-               + " subject varchar2(200),"
-               + " content varchar2(255),"
-               + " hit integer,"
-               + " pwd varchar(20),"
-               + " grp integer,"
-               + " deep varchar(255))";
-         ps = conn.prepareStatement(sql);
-         ps.execute();
-      }
-      
-      sql = "select count(*) cnt from user_tables where table_name = upper('board_att')";
-      ps = conn.prepareStatement(sql);
-      rs = ps.executeQuery();
-      rs.next();
-      cnt = rs.getInt("cnt");
-      if(cnt <1){
-         sql = "create table board_att("
-               + " serial integer,"
-               + " pserial integer,"
-               + " attfile varchar(255),"
-               + " oriattfile varchar(255)"
-               + ")";
-         ps = conn.prepareStatement(sql);
-         ps.execute();
-      }
-      
-      sql = "select count(*) cnt from user_sequences where sequence_name = upper('seq_board') ";
-      ps = conn.prepareStatement(sql);
-      rs = ps.executeQuery();
-      rs.next();
-      cnt = rs.getInt("cnt");
-      if(cnt<1){
-         sql = "create sequence seq_board";
-         ps = conn.prepareStatement(sql);
-         ps.execute();
-      }
-      
- 
-      
-      
-      sql = "select count(*) cnt from user_sequences where sequence_name = upper('seq_board_att')";
-      ps = conn.prepareStatement(sql);
-      rs = ps.executeQuery();
-      rs.next();
-      cnt = rs.getInt("cnt");
-      if(cnt<1){
-         sql = "create sequence seq_board_att";
-         ps = conn.prepareStatement(sql);
-         ps.execute();
-      }     
-	}
+	public String insert(HttpServletRequest request){
 
-	public int insert(HttpServletRequest req) {
-	   List<String> attFiles = new ArrayList<String>();
-	   List<String> oriAttFiles = new ArrayList<String>();
-	   
-		int rs = 0; // 정성적으로 저장된 경우 0보다 큰값.
-		String sql = null;
-		try {
-		   //파일 업로드 처리
-         multi = new MultipartRequest(req,
-                  uploadPath,
-                  size,
-                  encoding,
-                  new DefaultFileRenamePolicy());
-         
-         Enumeration<String> files = multi.getFileNames();
-         while(files.hasMoreElements()){
-            String tag = files.nextElement();
-            attFiles.add(multi.getFilesystemName(tag));
-            oriAttFiles.add(multi.getOriginalFileName(tag));
-         }
-         
-         //board 테이블에 내용 저장
-         sql = "insert into board(serial, mdate, worker, subject, "
-             + " content, hit, grp, deep) "
-             + " values(seq_board.nextval, sysdate, ?, ?, ?, 0 , "
-             + " seq_board.currval, seq_board.currval) ";
-         
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, multi.getParameter("worker"));
-			ps.setString(2, multi.getParameter("subject"));
-			ps.setString(3, multi.getParameter("content"));
-
-			rs = ps.executeUpdate();
+		String rs = "정상적으로 추가되었습니다.";
+		try{
+			MultipartRequest mr = new MultipartRequest(
+					request, sDirectory, mSize, "utf-8",
+					new DefaultFileRenamePolicy() );
 			
-			// board_att 테이블에 첨부 파일 저장
-			for(int i=0 ; i<attFiles.size() ; i++){
-			   if(attFiles.get(i) == null) continue;
-			   sql = "insert into board_att(serial, pserial, attfile, oriattfile)"
-	          + " values(seq_board_att.nextval, seq_board.currval, ?,?)";
-			   
-			   ps = conn.prepareStatement(sql);
-			   ps.setString(1, attFiles.get(i));
-			   ps.setString(2, oriAttFiles.get(i));
-			   
-			   rs = ps.executeUpdate();
-			   
+			String worker = mr.getParameter("worker");
+			String subject = mr.getParameter("subject");
+			String content = mr.getParameter("content");
+			String pwd     = mr.getParameter("pwd");
+			
+			String sql = "insert into board("
+					+ " serial, mdate, worker, subject, content, hit, grp, deep, pwd)"
+					+ " values(seq_board.nextval, sysdate, ?, ?, ?, 0, "
+					+ "        seq_board.currval, seq_board.currval, ? )";
+			
+			//rollback, commit
+			conn.setAutoCommit(false);
+			
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, worker);
+			ps.setString(2, subject);
+			ps.setString(3, content);
+			ps.setString(4, pwd);
+			int r = ps.executeUpdate();
+			if(r>0){
+				Enumeration enumFile = mr.getFileNames();
+				
+				while(enumFile.hasMoreElements()){
+					String tag = (String)enumFile.nextElement();
+					String ori = mr.getOriginalFileName(tag);
+					String sys = mr.getFilesystemName(tag);
+					
+					if(ori == null) continue;
+					
+					sql = "insert into board_att(serial, pserial, attfile, oriattfile) "
+						+ " values(seq_board_att.nextval, seq_board.currval, ?, ?)";
+					ps = conn.prepareStatement(sql);
+					ps.setString(1, sys);
+					ps.setString(2, ori);
+					
+					r = ps.executeUpdate();
+					if(r<1) rs = "데이터 저장중 오류 발생";
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					
+					bi = op.getAsBufferedImage();
+					
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
+					
+					System.gc();
+					
+				}
+				
+			
+			}
+			if(r>0){
+				conn.commit();
+			}else{
+				conn.rollback();
 			}
 			
-
-		} catch (Exception ex) {
-			rs = -1;
+			conn.close();
+	
+		}catch(Exception ex){
+			rs = "입력중 예외 발생";
+			try {
+				conn.rollback();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ex.printStackTrace();
 		}
 		return rs;
 	}
-	
-	public void pagaCompute(BoardVo v){
-	   pVo = new PageVo();
-	   
-	   int totList = 0; // 리스트 전체 갯수
-	   int totPage = 0; // 전체 페이지수
-	   int totBlock= 0; // 전체 블럭수
 
-	   int nowBlock = 1 ; // 현재 블럭
+	public void pageCompute(String findStr) throws Exception{
+		String sql = "select count(*) totSize from board "
+				   + " where subject like ? or content like ? ";
 
-	   int startNo = 0; // 리스트 목록의 시작위치
-	   int endNo = 0 ; // 리스트 목록의 마지막 위치
-
-	   int startPage = 0; // 한블럭에 표시할 시작 페이지 번호
-	   int endPage = 0; // 한블럭에 표시할 마지막 페이지 번호
-
-	   int nowPage = v.getNowPage(); // 현재 페이지
-	   
-	   PreparedStatement ps = null;
-      ResultSet rs = null;
-      String findStr = v.getFindStr();
-
-      String sql = "select count(*) cnt from board where worker like ? or subject like ? or content like ? ";
-      try {
-         ps = conn.prepareStatement(sql);
-         ps.setString(1, "%" + findStr + "%");
-         ps.setString(2, "%" + findStr + "%");
-         ps.setString(3, "%" + findStr + "%");
-         rs = ps.executeQuery();
-         rs.next();
-         
-         totList = rs.getInt("cnt");
-	   
-         totPage  = (int)Math.ceil(totList / (pVo.getListSize()* 1.0));
-         totBlock = (int)Math.ceil(totPage / (pVo.getBlockSize()* 1.0));
-   
-         nowBlock = (int)Math.ceil(nowPage / (pVo.getBlockSize()* 1.0));
-         
-         endPage = nowBlock * pVo.getBlockSize();
-         startPage = endPage -pVo.getBlockSize() + 1;
-   
-         endNo = nowPage * pVo.getListSize();
-         startNo = endNo - pVo.getListSize() + 1;
-         
-         if(endPage > totPage) endPage = totPage;
-         if(endNo > totList) endNo = totList;
-         
-         pVo.setTotList(totList);
-         pVo.setTotBlock(totBlock);
-         pVo.setEndNo(endNo);
-         pVo.setEndPage(endPage);
-         pVo.setNowBlock(nowBlock);
-         pVo.setStartNo(startNo);
-         pVo.setStartPage(startPage);
-         pVo.setTotPage(totPage);
-         pVo.setNowPage(nowPage);
-         
-         ps.close();
-         rs.close();
-         
-      }catch(Exception ex){}
-
+		ps = conn.prepareStatement(sql);
+		ps.setString(1,  "%" + findStr + "%");
+		ps.setString(2,  "%" + findStr + "%");
+		
+		rs = ps.executeQuery();
+		if(rs.next()){
+			totSize = rs.getInt("totSize");
+		}
+		
+		totPage = (int)Math.ceil(totSize / (double)listSize );
+		totBlock = (int)Math.ceil(totPage / (double)blockSize);
+		
+		nowBlock = (int)Math.ceil(nowPage / (double)blockSize);
+		
+		endPage = blockSize * nowBlock;
+		startPage = endPage - blockSize + 1;
+		
+		if(endPage > totPage) endPage = totPage;
+		
+		endNo = nowPage * listSize;
+		startNo = endNo - listSize + 1;
+		
+		if(endNo > totSize) endNo = totSize;
+		
 	}
 
-	public List<BoardVo> list(BoardVo v) {
-	   pagaCompute(v);
-	   
-		String findStr = v.getFindStr();
-		String replStr = "";
-
-		String sql = "select * from("
-		           + "  select rownum no, brd.* from("
-		           + "    select b.*, (select count(*) from board_att where pserial = b.serial) cnt from board b "
-		           + " where worker like ? or subject like ? or content like ? "
-		           + "    order by grp desc, deep asc"
-		           + "  )brd "
-		           + ") where no between ? and ? ";
-
+	
+	
+	public ArrayList<BoardVo> select(){
+		return select("", 1);
+	}
+	public ArrayList<BoardVo> select(String findStr, int nowPage){
+		
+		this.nowPage = nowPage;
+		
 		ArrayList<BoardVo> list = new ArrayList<BoardVo>();
-		try {
+		
+		try{
+			pageCompute(findStr);
+			
+			String sql =
+				  " select * from( "
+				+ "   select rownum rnum, b.* from ("
+				+ "     select a.*, (select count(*) from board_att "
+				+ "                  where a.serial=pserial)cnt "
+				+ "     from board a "
+				+ "     where subject like ? or content like ? "
+				+ "     order by grp desc, deep asc)b "
+				+ " ) where rnum between ? and ? ";
+			
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, "%" + findStr + "%");
 			ps.setString(2, "%" + findStr + "%");
-			ps.setString(3, "%" + findStr + "%");
-			ps.setInt(4,  pVo.getStartNo());
-			ps.setInt(5,  pVo.getEndNo());
-			
+			ps.setInt(3, startNo);
+			ps.setInt(4, endNo);
 			
 			rs = ps.executeQuery();
-
-			while (rs.next()) {
-			   replStr = "";
-			   int deep = rs.getString("deep").split("-").length;
-			   if(deep>1){
-			      for(int i=3; i<=deep ;i++){
-			         replStr += "&nbsp;&nbsp;";
-			      }
-               replStr += "└";
-			   }
-				BoardVo vo = new BoardVo();
-				vo.setSerial(rs.getInt("serial"));
-				vo.setmDate(rs.getDate("mdate").toString());
-				vo.setWorker(rs.getString("worker"));
-				vo.setSubject(replStr + rs.getString("subject"));
-				vo.setHit(rs.getInt("hit"));
-				vo.setCnt(rs.getInt("cnt"));
-
-				list.add(vo);
+			while(rs.next()){
+				int deepCnt = rs.getString("deep").split("-").length;
+				String temp = "";
+				for(int i=1 ; i<deepCnt;i++) temp += "&nbsp;&nbsp;";
+				if(deepCnt >1 ) temp += "┗ ";
+				BoardVo v = new BoardVo();
+				v.setSerial(rs.getInt("serial"));
+				v.setmDate(rs.getDate("mdate").toString());
+				v.setSubject(temp + rs.getString("subject"));
+				v.setHit(rs.getInt("hit"));
+				v.setCnt(rs.getInt("cnt"));
+				v.setWorker(rs.getString("worker"));
+				
+				list.add(v);
 			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			return list;
-		}
-	}
-
-	public int delete(BoardVo v) {
-		BoardVo temp = selectOne(v);
-		File deleteFile = null;
-		String sql = "";
-		
-		int r=1;
-		try{
-		   //원본글 삭제
-   		sql = "delete from board where serial =?";
-   		ps = conn.prepareStatement(sql);
-   		ps.setInt(1, v.getSerial());
-   		ps.executeUpdate();
-   		
-   		//첨부파일들 불러오기
-   		sql = "select * from board_att where pserial=?";
-   		ps = conn.prepareStatement(sql);
-   		ps.setInt(1,  v.getSerial());
-   		rs = ps.executeQuery();
-
-   		//첨부파일 삭제
-   		while(rs.next()){
-            deleteFile = new File(uploadPath + rs.getString("attfile"));
-            if (deleteFile.exists()){
-               deleteFile.delete();
-            }
-   		}
-   		//첨부 테이블 삭제
-   		sql = "delete from board_att where pserial=?";
-         ps = conn.prepareStatement(sql);
-         ps.setInt(1, v.getSerial());
-         ps.executeUpdate();
-
-		} catch (Exception ex) {
-			r = -1;
-			ex.printStackTrace();
-		} finally {
-			return r;
-		}
-	}
-
-	public BoardVo view(BoardVo vo) {
-		String sql = "";
-		BoardVo v = null;
-		
-		try {
-			// hit수 증가
-			sql = "update board set hit = hit+1 where serial=?";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, vo.getSerial());
-			ps.executeUpdate();
 			
-			v = selectOne(vo);
-
-			v.setFindStr(vo.getFindStr());
-			v.setNowPage(vo.getNowPage());
-		} catch (Exception ex) {
+		}catch(Exception ex){
 			ex.printStackTrace();
-		} finally {
-			return v;
+			list =null;
 		}
-	}
-
-	public BoardVo selectOne(BoardVo v) {
-	   
-		String sql = "";
-		BoardVo vo = new BoardVo();
-		vo.setFindStr(v.getFindStr());
-		vo.setNowPage(v.getNowPage());
-
-		List<String> attFile = new ArrayList<String>();
-		List<String> oriFile = new ArrayList<String>();
 		
-		try {
-		   //윈본글
-			sql = "select b.*, m.email from board b left join member m on b.worker=m.mid where serial = ?";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, v.getSerial());
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				vo.setSerial(rs.getInt("serial"));
-				vo.setmDate(rs.getString("mDate"));
-				vo.setWorker(rs.getString("worker"));
-				vo.setSubject(rs.getString("subject"));
-				vo.setContent(rs.getString("content"));
-				vo.setHit(rs.getInt("hit"));
-				vo.setGrp(rs.getInt("grp"));
-				vo.setDeep(rs.getString("deep"));
-				vo.setEmail(rs.getString("email"));
-
-				//첨부파일
-				sql = "select attfile, oriattfile from board_att where pserial=?";
-				ps = conn.prepareStatement(sql);
-            ps.setInt(1, vo.getSerial());
-
-            ResultSet rs2 = ps.executeQuery();
-				while(rs2.next()){
-				   attFile.add(rs2.getString("attfile"));
-				   oriFile.add(rs2.getString("oriattfile"));
-				}
-				vo.setAttfile(attFile);
-				vo.setOriAttfile(oriFile);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			return vo;
-		}
-	}
-
-	public BoardVo update(HttpServletRequest req) {
-	   List<String> attFiles = new ArrayList<String>();
-      List<String> oriAttFiles = new ArrayList<String>();
-
-		int r = 0;
-		String sql = "";
-		MultipartRequest multi = null;
-		BoardVo vo = null;
-		BoardVo tempVo = null;
-		String tempFile = null;
-		String file1 = null;
-		String file2 = null;
-		String oriFile1 = null;
-		String oriFile2 = null;
-		String[]  delFile = null;
-		
-		try {
-			// 첨부파일
-			multi = new MultipartRequest(req, uploadPath, size, encoding,
-					new DefaultFileRenamePolicy());
-			
-			Enumeration<String> files = multi.getFileNames();
-
-			while(files.hasMoreElements()){
-				tempFile = files.nextElement();
-				attFiles.add(multi.getFilesystemName(tempFile));
-				oriAttFiles.add(multi.getOriginalFileName(tempFile));
-			}
-
-			//원본 수정
-			sql = "update board set subject=? , content=? where serial=?";
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, multi.getParameter("subject"));
-			ps.setString(2, multi.getParameter("content"));
-			ps.setString(3, multi.getParameter("serial"));
-			r = ps.executeUpdate();
-			
-         // board_att 테이블에 첨부 파일 저장
-         for(int i=0 ; i<attFiles.size() ; i++){
-            if(attFiles.get(i) == null) continue;
-            sql = "insert into board_att(serial, pserial, attfile, oriattfile)"
-             + " values(seq_board_att.nextval, ?, ?,?)";
-            
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, multi.getParameter("serial"));
-            ps.setString(2, attFiles.get(i));
-            ps.setString(3, oriAttFiles.get(i));
-            
-            r = ps.executeUpdate();
-         }
-         
-         // 삭제된 첨부파일 처리
-         if(multi.getParameterValues("deleteFile") != null){
-            delFile = multi.getParameterValues("deleteFile");
-            for(int i=0 ; i<delFile.length ; i++){
-               sql = "delete from board_att where attfile=? ";
-               ps = conn.prepareStatement(sql);
-               ps.setString(1,  delFile[i]);
-               ps.executeUpdate();
-               
-               File f = new File("../../upload/" + delFile[i]);
-               if(f.exists()) f.delete();
-            }
-         }
-         
-         vo = new BoardVo();
-         vo.setSerial(Integer.parseInt(multi.getParameter("serial")));
-         vo.setFindStr(multi.getParameter("findStr"));
-         vo.setNowPage(Integer.parseInt(multi.getParameter("nowPage")));
-		} catch (Exception ex) {
-			vo = null;
-			ex.printStackTrace();
-		} finally {
-			return vo;
-		}
+		return list;
 	}
 	
-	public BoardVo repl(HttpServletRequest req) {
-	   List<String> attFiles = new ArrayList<String>();
-      List<String> oriAttFiles = new ArrayList<String>();
-      
-		String sql = null;
-
-		BoardVo vo = new BoardVo();
-		int np = 1;
-		String msg = "";
-
-		MultipartRequest multi = null;
-
-		try {
-			multi = new MultipartRequest(req, uploadPath, size, encoding,
-					new DefaultFileRenamePolicy());
-
-			// 첨부파일
-			Enumeration<String> files = multi.getFileNames();
-			
-			while(files.hasMoreElements()){
-            String file1 = files.nextElement();
-            attFiles.add(multi.getFilesystemName(file1));
-            oriAttFiles.add(multi.getOriginalFileName(file1));
-         }
-
-			//내용 저장
-	      sql = "insert into board(serial, mdate, worker, subject, "
-	            + " content, hit, grp, deep)"
-	            + " values(seq_board.nextval, sysdate, ?, ?, ?, 0, ?, "
-	            + " ? || '-' || seq_board.currval)";
-
+	public BoardVo selectOne(int serial){
+		BoardVo v = new BoardVo();
+		String sql = "";
+		try{
+			//조회수 증가
+			sql = "update board set hit=hit+1 where serial=?";
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, multi.getParameter("worker"));
-			ps.setString(2, multi.getParameter("subject"));
-			ps.setString(3, multi.getParameter("content"));
-			ps.setString(4, multi.getParameter("grp"));
-			ps.setString(5, multi.getParameter("deep"));
-
+			ps.setInt(1, serial);
 			ps.executeUpdate();
 			
-         // board_att 테이블에 첨부 파일 저장
-         for(int i=0 ; i<attFiles.size() ; i++){
-            if(attFiles.get(i) == null) continue;
-            sql = "insert into board_att(serial, pserial, attfile, oriattfile)"
-             + " values(seq_board_att.nextval, seq_board.currval, ?,?)";
-            
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, attFiles.get(i));
-            ps.setString(2, oriAttFiles.get(i));
-            
-            ps.executeUpdate();
-            
-         }			
-         vo.setFindStr(multi.getParameter("findStr"));
-         vo.setNowPage(Integer.parseInt(multi.getParameter("nowPage")));
-
-		} catch (Exception ex) {
-			vo = null;
+			//한건 읽음
+			sql = " select b.*, m.email email "
+				+ " from board b left join member m on b.worker = m.mid "
+				+ " where serial = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, serial);
+			rs = ps.executeQuery();
+			rs.next();
+			v.setSerial(rs.getInt("serial"));
+			v.setWorker(rs.getString("worker"));
+			v.setSubject(rs.getString("subject"));
+			
+			if(rs.getString("content") != null){
+				v.setContent(rs.getString("content").replaceAll("\n", "<br/>"));
+			}else{
+				v.setContent("");
+			}
+			
+			
+			v.setmDate(rs.getDate("mdate").toString());
+			v.setHit(rs.getInt("hit"));
+			v.setEmail(rs.getString("email"));
+			
+			v.setGrp(rs.getInt("grp"));
+			v.setDeep(rs.getString("deep"));
+			
+			
+			//첨부 파일
+			Map<String, String> map = new HashMap<String, String>();
+			sql = "select * from board_att where pserial = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, serial);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				map.put(rs.getString("attfile"), rs.getString("oriattfile"));
+			}
+			if(map.size()==0) map = null;
+			v.setAttfile(map);
+			
+			conn.close();
+		}catch(Exception ex){
+			v = null;
 			ex.printStackTrace();
-		} finally {
-			return vo;
 		}
+		
+		return v;
+	}
+	
+	
+	public String delete(int serial){
+		
+		String r = "정상적으로 삭제됨";
+		String sql = "";
+		try{
+			//board 삭제(serial)
+			sql = "delete from board where serial = ? ";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, serial);
+			ps.executeUpdate();
+			
+			//board_att로 부터 첨부 파일 정보
+			//첨부 파일 삭제
+			sql = "select attfile from board_att where pserial=?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, serial);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				String file = sDirectory + rs.getString("attfile");
+				File f = new File(file);
+				if(f.exists()) f.delete();
+				
+				//thumb nail 삭제
+				file = sDirectory + "thumb_" + rs.getString("attfile");
+				f = new File(file);
+				if(f.exists()) f.delete();
+				
+				f = null;
+				
+			}
+			
+			//board_att 삭제(pserial)
+			sql = "delete from board_att where pserial = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, serial);
+			ps.executeUpdate();
+			
+		}catch(Exception ex){
+			r = "삭제중 예외 발생";
+			ex.printStackTrace();
+		}
+		
+		return r;
+	}
+	
+	
+	public Map<String, Object> repl(HttpServletRequest request){
+		Map<String, Object> rMap = new HashMap<String, Object>();
+		
+		rMap.put("rs", "답변이 정상적으로 처리되었습니다.");
+		
+		try{
+			MultipartRequest mr = new MultipartRequest(
+					request, sDirectory, mSize, "utf-8",
+					new DefaultFileRenamePolicy() );
+			
+			String worker = mr.getParameter("worker");
+			String subject = mr.getParameter("subject");
+			String content = mr.getParameter("content");
+			String pwd     = mr.getParameter("pwd");
+			int    grp     = Integer.parseInt(mr.getParameter("grp"));
+			String deep    = mr.getParameter("deep");
+			
+			String findStr = mr.getParameter("findStr");
+			int    nowPage = Integer.parseInt(mr.getParameter("nowPage"));
+			
+			conn.setAutoCommit(false);
+			
+			String sql = "insert into board("
+					+ " serial, mdate, worker, subject, content, hit, grp, deep, pwd)"
+					+ " values(seq_board.nextval, sysdate, ?, ?, ?, 0, "
+					+ "        ?, ? ||'-'||seq_board.currval, ? )";
+			
+			//rollback, commit
+			
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, worker);
+			ps.setString(2, subject);
+			ps.setString(3, content);
+			
+			ps.setInt(4, grp);
+			ps.setString(5, deep);
+			
+			ps.setString(6, pwd);
+			int r = ps.executeUpdate();
+			if(r>0){
+				Enumeration enumFile = mr.getFileNames();
+				
+				while(enumFile.hasMoreElements()){
+					String tag = (String)enumFile.nextElement();
+					String ori = mr.getOriginalFileName(tag);
+					String sys = mr.getFilesystemName(tag);
+					
+					if(ori == null) continue;
+					
+					sql = "insert into board_att(serial, pserial, attfile, oriattfile) "
+						+ " values(seq_board_att.nextval, seq_board.currval, ?, ?)";
+					ps = conn.prepareStatement(sql);
+					ps.setString(1, sys);
+					ps.setString(2, ori);
+					
+					r = ps.executeUpdate();
+					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
+					
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					bi = op.getAsBufferedImage();
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
+				}
+			}
+			if(r>0){
+				conn.commit();
+			}else{
+				conn.rollback();
+			}
+			
+			conn.close();
+			
+			rMap.put("findStr", findStr );
+			rMap.put("nowPage", nowPage);
+
+		}catch(Exception ex){
+			rMap = null;
+			ex.printStackTrace();
+		}
+		
+		return rMap;
+	}
+	
+	public Map<String, Object> modify(HttpServletRequest request){
+		Map<String, Object> rMap = new HashMap<String, Object>();
+		
+		rMap.put("rs", "정상적으로 수정되었습니다.");
+		int r=0;
+		String sql = "";
+		try{
+			MultipartRequest mr = new MultipartRequest(
+					request, sDirectory, mSize, "utf-8",
+					new DefaultFileRenamePolicy() );
+			
+			String subject = mr.getParameter("subject");
+			String content = mr.getParameter("content");
+			String pwd     = mr.getParameter("pwd");
+			
+			int    serial  = Integer.parseInt(mr.getParameter("serial"));
+			String findStr = mr.getParameter("findStr");
+			int    nowPage = Integer.parseInt(mr.getParameter("nowPage"));
+			
+			//rollback, commit
+			conn.setAutoCommit(false);
+			
+			// 내용 수정
+			sql = "update board set subject = ? , content = ? "
+				+	" where serial = ? and pwd = ? ";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, subject);
+			ps.setString(2, content);
+			ps.setInt(3, serial);
+			ps.setString(4, pwd);
+			
+			r = ps.executeUpdate();
+			if(r<=0){
+				rMap.put("rs", "데이터 수정중 오류 발생");
+			}else{
+				// 삭제 파일 제거
+				String[] delAtt = mr.getParameterValues("deleteAtt");
+				if(delAtt != null){
+					for(int i=0 ; i<delAtt.length ; i++){
+						File f = new File(sDirectory + delAtt[i]);
+						f.deleteOnExit();
+						f = new File(sDirectory + "thumb_" + delAtt[i]);
+						f.deleteOnExit();
+						
+						sql = "delete from board_att where attfile = ?";
+						ps = conn.prepareStatement(sql);
+						ps.setString(1, delAtt[i]);
+						ps.executeUpdate();
+					}
+					
+				}
+				
+				Enumeration enumFile = mr.getFileNames();
+				
+				while(enumFile.hasMoreElements()){
+					String tag = (String)enumFile.nextElement();
+					String ori = mr.getOriginalFileName(tag);
+					String sys = mr.getFilesystemName(tag);
+					
+					if(ori == null) continue;
+					
+					sql = "insert into board_att(serial, pserial, attfile, oriattfile) "
+						+ " values(seq_board_att.nextval, ?, ?, ?)";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, serial);
+					ps.setString(2, sys);
+					ps.setString(3, ori);
+					
+					r = ps.executeUpdate();
+					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
+					
+					//thumb nail 만들기
+					pb = new ParameterBlock();
+					pb.add(sDirectory + sys);
+					op = JAI.create("fileload", pb);
+					bi = op.getAsBufferedImage();
+					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					g2d = thumb.createGraphics();
+					g2d.drawImage(bi, 0, 0, 100, 100, null);
+					File file = new File(sDirectory + "thumb_" + sys);
+					ImageIO.write(thumb, "png", file);
+				}
+			}
+			if(r>0){
+				conn.commit();
+			}else{
+				conn.rollback();
+			}
+			
+			conn.close();
+			
+			rMap.put("serial", serial);
+			rMap.put("findStr", findStr );
+			rMap.put("nowPage", nowPage);
+
+		}catch(Exception ex){
+			try {
+
+				conn.rollback();
+				rMap = null;
+				ex.printStackTrace();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return rMap;
+	}
+	
+	public Map<String, List<BoardVo>> newList(){
+		// key=n이면 최신, h이면 인기자료
+		Map<String, List<BoardVo>> map = new HashMap<String, List<BoardVo>>();
+		String sql = "";
+		try{
+			//최신자료 5개
+			 sql =
+				  " select * from( "
+				+ "   select rownum rnum, b.* from ("
+				+ "     select a.*, (select count(*) from board_att "
+				+ "                  where a.serial=pserial)cnt "
+				+ "     from board a "
+				+ "     where to_char(grp) = deep "
+				+ "     order by serial desc)b "
+				+ " ) where rnum between 1 and 5 ";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			
+			List<BoardVo> nList = new ArrayList<BoardVo>();
+			while(rs.next()){
+				BoardVo v = new BoardVo();
+				v.setSerial(rs.getInt("serial"));
+				v.setSubject(rs.getString("subject") + "(" + rs.getInt("cnt") + ")");
+				v.setWorker(rs.getString("worker"));
+				nList.add(v);
+			}
+			map.put("n", nList);
+			
+			//인기자료 5개
+			 sql =
+					  " select * from( "
+					+ "   select rownum rnum, b.* from ("
+					+ "     select a.*, (select count(*) from board_att "
+					+ "                  where a.serial=pserial)cnt "
+					+ "     from board a "
+					+ "     where to_char(grp) = deep "
+					+ "     order by hit desc)b "
+					+ " ) where rnum between 1 and 5 ";
+				ps = conn.prepareStatement(sql);
+				rs = ps.executeQuery();
+				
+				List<BoardVo> hList = new ArrayList<BoardVo>();
+				while(rs.next()){
+					BoardVo v = new BoardVo();
+					v.setSerial(rs.getInt("serial"));
+					v.setSubject(rs.getString("subject") + "(" + rs.getInt("cnt") + ")");
+					v.setWorker(rs.getString("worker"));
+					hList.add(v);
+				}
+				map.put("h", hList);
+			
+		}catch(Exception ex){
+			map = null;
+			ex.printStackTrace();
+		}
+		
+		return map;
+	}
+	
+	
+	
+
+	public int getListSize() {
+		return listSize;
 	}
 
-   public PageVo getpVo() {
-      return pVo;
-   }
+	public void setListSize(int listSize) {
+		this.listSize = listSize;
+	}
+
+	public int getBlockSize() {
+		return blockSize;
+	}
+
+	public void setBlockSize(int blockSize) {
+		this.blockSize = blockSize;
+	}
+
+	public int getTotSize() {
+		return totSize;
+	}
+
+	public void setTotSize(int totSize) {
+		this.totSize = totSize;
+	}
+
+	public int getTotPage() {
+		return totPage;
+	}
+
+	public void setTotPage(int totPage) {
+		this.totPage = totPage;
+	}
+
+	public int getTotBlock() {
+		return totBlock;
+	}
+
+	public void setTotBlock(int totBlock) {
+		this.totBlock = totBlock;
+	}
+
+	public int getNowPage() {
+		return nowPage;
+	}
+
+	public void setNowPage(int nowPage) {
+		this.nowPage = nowPage;
+	}
+
+	public int getNowBlock() {
+		return nowBlock;
+	}
+
+	public void setNowBlock(int nowBlock) {
+		this.nowBlock = nowBlock;
+	}
+
+	public int getStartPage() {
+		return startPage;
+	}
+
+	public void setStartPage(int startPage) {
+		this.startPage = startPage;
+	}
+
+	public int getEndPage() {
+		return endPage;
+	}
+
+	public void setEndPage(int endPage) {
+		this.endPage = endPage;
+	}
+
+	public int getStartNo() {
+		return startNo;
+	}
+
+	public void setStartNo(int startNo) {
+		this.startNo = startNo;
+	}
+
+	public int getEndNo() {
+		return endNo;
+	}
+
+	public void setEndNo(int endNo) {
+		this.endNo = endNo;
+	}
+	
+	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

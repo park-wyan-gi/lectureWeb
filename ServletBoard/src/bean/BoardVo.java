@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class BoardVo{
 	
@@ -18,13 +19,10 @@ public class BoardVo{
 	int    grp;
 	int    cnt; //첨부파일 갯수
 	String deep;
-	List<String> attfile; //서버에 저장된 파일명
-	List<String> oriAttfile;//사용자가 선택한 원본 파일명
-	String[] deleteFile;
+	Map<String, String> attfile; //첨부파일 또는 삭제 파일(key=SystemFileName, value=OriginalFileName)
 	String  email;
 	
 	String findStr="";
-	int    nowPage;
 
 	public BoardVo(){}
 	public BoardVo(int s, String md, String wk, String sub, String cont, int h){
@@ -102,31 +100,13 @@ public class BoardVo{
 	public void setDeep(String deep) {
 		this.deep = deep;
 	}
-	public int getNowPage() {
-		return nowPage;
-	}
-	public void setNowPage(int nowPage) {
-		this.nowPage = nowPage;
-	}
-	public List<String> getAttfile() {
+	public Map<String, String> getAttfile() {
 		return attfile;
 	}
-	public void setAttfile(List<String> attfile) {
+	public void setAttfile(Map<String, String> attfile) {
 		this.attfile = attfile;
 	}
-	public List<String> getOriAttfile() {
-		return oriAttfile;
-	}
-	public void setOriAttfile(List<String> oriAttfile) {
-		this.oriAttfile = oriAttfile;
-	}
-   public String[] getDeleteFile() {
-      return deleteFile;
-   }
-   public void setDeleteFile(String[] deleteFile) {
-      this.deleteFile = deleteFile;
-   }
-
+ 
 }
 
 

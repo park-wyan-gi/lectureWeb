@@ -34,7 +34,7 @@
 <body>
 <div id='board'>
    <h2>게시판 입력(Servlet)</h2>
-	<form name='frm_board_input' method='post' action='insert.do'  
+	<form name='frm_board_input' method='post' action='insertR.do'  
 	           enctype='multipart/form-data'>
 	           
          <label>작성자</label>

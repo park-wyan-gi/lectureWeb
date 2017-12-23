@@ -24,7 +24,8 @@ public class TableCreation {
 	public boolean initTable(String tName){
 		boolean b = true;
 		try{
-			sql = "select count(*) cnt from user_tables where table_name = '" + tName.toUpperCase()+ "'";
+			sql = "select count(*) cnt from user_tables where table_name = '" 
+					+ tName.toUpperCase()+ "'";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			rs.next();

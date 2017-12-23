@@ -28,6 +28,7 @@
 		String msg = "";
 		TableCreation tc = new TableCreation();
 		String[] tNames = request.getParameterValues("tName");
+		if(tNames == null) return;
 		for(String tName : tNames){
 			if(tName.equals("board")){
 				msg += "<li>" + tc.createBoard(tName);
@@ -48,5 +49,19 @@
 	
 	<%=msg %>
 </div>
+
+<script>
+var frm = document.frm_tc;
+var items = ['${paramValues.tName[0]}', '${paramValues.tName[1]}', 
+			 '${paramValues.tName[2]}', '${paramValues.tName[3]}'];
+for(i=0 ; i<4 ; i++){
+	if(items[i] == 'board')    { frm.tName[0].checked=true; }
+	if(items[i] == 'board_att'){ frm.tName[1].checked=true; }
+	if(items[i] == 'member')   { frm.tName[2].checked=true; }
+	if(items[i] == 'guestbook'){ frm.tName[3].checked=true; }
+}
+</script>
+
+
 </body>
 </html>

@@ -21,8 +21,8 @@ public class TableCreation {
 
 	}
 
-	public boolean initTable(String tName){
-		boolean b = true;
+	public int initTable(String tName){
+		int r = 0;
 		try{
 			sql = "select count(*) cnt from user_tables where table_name = '" 
 					+ tName.toUpperCase()+ "'";
@@ -34,14 +34,14 @@ public class TableCreation {
 				sql = "truncate table " + tName;
 				ps = conn.prepareStatement(sql);
 				ps.execute();
-	
+				r=1;//테이블이 있어서 초기화된 경우
 			} else {
-				b = false;
+				r=2;//테이블이 없는 경우
 			}
 		}catch(Exception ex){
-			b=false;
+			r=-1;
 		}
-		return b;
+		return r;
 
 	}
 
@@ -66,10 +66,15 @@ public class TableCreation {
 	
 	public String createBoard(String tName) {
 		String rs = "";
-		if (initTable(tName)) {
+		int r=-1;
+		r = initTable(tName);
+		
+		if( r== -1){
+			rs = "자료실 체크중 예외 발생.";
+		}else if ( r==1) {
 			rs = "자료실 테이블이 초기화 되었습니다.";
 			
-		}else{
+		}else if(r==2){
 			
 			// table 생성 및 시퀀스 생성
 			sql = "create table board(" 
@@ -84,6 +89,7 @@ public class TableCreation {
 					+ " deep varchar(255))";
 			try{
 				ps = conn.prepareStatement(sql);
+				ps.execute();
 				rs = "자료실 테이블이 정상적으로 생성되었습니다.";
 			}catch(Exception ex){
 				rs ="자료실 테이블 생성중 오류 발생";
@@ -99,9 +105,14 @@ public class TableCreation {
 
 	public String createBoardAtt(String tName){
 		String rs = "";
-		if (initTable(tName)) {
+		int r=0;
+		r = initTable(tName);
+		
+		if(r == -1){
+			rs = "자료실 첨부 테이블 체크중 예외 발생";
+		}else if (r==1) {
 			rs ="자료실 첨부 테이블이 초기화 되었습니다.";
-		}else{
+		}else if(r==2){
 			sql = "create table board_att(" 
 					+ " serial integer," 
 					+ " pserial integer,"
@@ -130,9 +141,14 @@ public class TableCreation {
 
 	public String createMember(String tName){
 		String rs = "";
-		if (initTable(tName)) {
+		int r = -1;
+		r = initTable(tName);
+		
+		if(r == -1){
+			rs = "회원관리 테이블 체크중 예외 발생";
+		}else if (r==1) {
 			rs = "회원관리 테이블이 초기화되었습니다.";
-		}else{
+		}else if (r==2){
 			sql = "create table member(" 
 					+ " mid varchar(20) primary key,"
 					+ " irum varchar(30),"

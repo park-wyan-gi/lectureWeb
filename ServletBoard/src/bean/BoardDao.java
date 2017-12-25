@@ -360,7 +360,7 @@ public class BoardDao {
    public Map<String, Object> repl(HttpServletRequest request) {
       Map<String, Object> rMap = new HashMap<String, Object>();
 
-      rMap.put("rs", "답변이 정상적으로 처리되었습니다.");
+      rMap.put("msg", "답변이 정상적으로 처리되었습니다.");
 
       try {
          MultipartRequest mr = new MultipartRequest(request, sDirectory, mSize,
@@ -414,7 +414,7 @@ public class BoardDao {
 
                r = ps.executeUpdate();
                if (r < 1)
-                  rMap.put("rs", "데이터 저장중 오류 발생");
+                  rMap.put("msg", "데이터 저장중 오류 발생");
 
                // thumb nail 만들기
                if (sys.lastIndexOf(".png") >= 0 || sys.lastIndexOf(".gif") >= 0

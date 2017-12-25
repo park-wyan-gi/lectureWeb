@@ -95,12 +95,6 @@ public class BoardServlet extends HttpServlet{
 			dispatcher.forward(req, resp);
 			
 		}else if(uri.indexOf("repl.do") >=0){
-			int grp = Integer.parseInt(req.getParameter("grp"));
-			String deep = req.getParameter("deep");
-			
-			req.setAttribute("grp", grp);
-			req.setAttribute("deep", deep);
-			
 			dispatcher = req.getRequestDispatcher(url + "repl.jsp");
 			dispatcher.forward(req, resp);
 			

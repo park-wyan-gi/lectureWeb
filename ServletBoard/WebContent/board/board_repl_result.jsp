@@ -13,14 +13,11 @@
 </head>
 <body>
 <h2>답변 저장(JSP)</h2>
-${msg}
+${rMap['msg']}
 <p/>
 <form name='frm_board' method='post'  action = "list.do" >
-      <input type='hidden' name='findStr'     value="${obj.findStr }"/>
-      <input type='hidden' name='nowPage'  value="${obj.nowPage }"/>
-      <input type='hidden' name='serial'        value="${obj.serial }"/>
-      <input type='hidden' name='grp'           value="${obj.grp }"/>
-      <input type='hidden' name='deep'         value="${obj.deep }"/>
+      <input type='text' name='findStr'     value="${rMap['findStr'] }"/>
+      <input type='text' name='nowPage'  value="${rMap['nowPage'] }"/>
       <input type='submit' value='목록으로' />
 </form>
 

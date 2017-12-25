@@ -77,10 +77,10 @@ function attfileAppend2(){ //파일추가  Ver 2.0
 <body>
 <div id='board'>
    <h2>게시판 댓글 입력(Servlet)</h2>
-   <form name='frm_board' method='post'  action='repl_result.do' enctype='multipart/form-data'>
+   <form name='frm_board' method='post'  action='replR.do' enctype='multipart/form-data'>
                
       <label>작성자</label>
-      <input type='text' name='worker' value='repl'><br/>
+      <input type='text' name='worker' value='${sessionScope.id}'><br/>
       <label>제목</label>
       <input type='text' name='subject' value='답변)hi.....' size='70'><br/>
       <label></label>
@@ -92,11 +92,11 @@ function attfileAppend2(){ //파일추가  Ver 2.0
       
       <label></label>
       <input type='submit' value='댓글 작성'>
-      <input type='hidden' name='findStr'     value="${obj.findStr }"/>
-      <input type='hidden' name='nowPage'  value="${obj.nowPage }"/>
-      <input type='hidden' name='serial'        value="${obj.serial }"/>
-      <input type='hidden' name='grp'           value="${obj.grp }"/>
-      <input type='hidden' name='deep'         value="${obj.deep }"/>
+      <input type='text' name='findStr'      value="${param.findStr }"/>
+      <input type='text' name='nowPage'      value="${param.nowPage }"/>
+      <input type='text' name='serial'       value="${param.serial }"/>
+      <input type='text' name='grp'          value="${param.grp }"/>
+      <input type='text' name='deep'         value="${param.deep }"/>
       
 </form>
 <script>attfileAppend2()</script>

@@ -34,11 +34,11 @@ window.onload=function(){
 	<%
 	} else {
 	%>
-	<form name='frm' method='post' action='LoginServlet2'>
+	<form name='frm' method='post' action='LoginServlet'>
 	   <label>아이디</label>
-	   <input type='text' name='mid' value='b4444'>   
+	   <input type='text' name='mid' value='manager'>   
 	   <label>암호</label>
-	   <input type='password' name='pwd' value='1111'>
+	   <input type='password' name='pwd' value='manager'>
 	
 	   <input type='submit' value='로그인'/>
 	</form>

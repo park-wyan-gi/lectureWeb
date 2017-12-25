@@ -28,8 +28,8 @@ import bean.DBConnect;
 
 public class BoardDao {
 	String sDirectory = 
-			"C:/Users/JHTA/git/lectureWeb/Servlet1705/WebContent/download/";
-	         
+			"C:/Users/박원기/git/lectureWeb/ServletBoard/WebContent/upload/";
+	//		"C:/Users/JHTA/git/lectureWeb/Servlet1705/WebContent/download/";
 	int    mSize = 1024*100000;
 	
 	Connection conn;
@@ -56,9 +56,17 @@ public class BoardDao {
 	BufferedImage thumb;
 	Graphics2D g2d;
 	
-	public BoardDao() {
+	public BoardDao(HttpServletRequest request) {
 		try{
 			conn = new DBConnect().getConn();
+			/*
+			// tomcat 서버로 deploy시킬 경우
+			sDirectory = request.getRealPath("upload")+ "/";
+			File temp = new File(sDirectory);
+			if( ! temp.exists()){
+				temp.mkdirs();
+			}
+			*/
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -109,21 +117,14 @@ public class BoardDao {
 					
 					r = ps.executeUpdate();
 					if(r<1) rs = "데이터 저장중 오류 발생";
+					
 					//thumb nail 만들기
-					pb = new ParameterBlock();
-					pb.add(sDirectory + sys);
-					op = JAI.create("fileload", pb);
+					if(sys.lastIndexOf(".png")>=0 || 
+					   sys.lastIndexOf(".gif")>=0 ||
+					   sys.lastIndexOf(".jpg")>=0){
 					
-					bi = op.getAsBufferedImage();
-					
-					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-					g2d = thumb.createGraphics();
-					g2d.drawImage(bi, 0, 0, 100, 100, null);
-					
-					File file = new File(sDirectory + "thumb_" + sys);
-					ImageIO.write(thumb, "png", file);
-					
-					System.gc();
+						makeThumb(sys);
+					}
 					
 				}
 				
@@ -150,6 +151,26 @@ public class BoardDao {
 		return rs;
 	}
 
+	public void makeThumb(String sys){
+		try{
+			pb = new ParameterBlock();
+			pb.add(sDirectory + sys);
+			op = JAI.create("fileload", pb);
+			
+			bi = op.getAsBufferedImage();
+			
+			thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+			g2d = thumb.createGraphics();
+			g2d.drawImage(bi, 0, 0, 100, 100, null);
+			
+			File file = new File(sDirectory + "thumb_" + sys);
+			ImageIO.write(thumb, "png", file);
+			
+			System.gc();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 	public void pageCompute(String findStr) throws Exception{
 		String sql = "select count(*) totSize from board "
 				   + " where subject like ? or content like ? ";
@@ -183,16 +204,19 @@ public class BoardDao {
 	
 	
 	public ArrayList<BoardVo> select(){
-		return select("", 1);
+		BoardVo vo = new BoardVo();
+		vo.setNowPage(1);
+		vo.setFindStr("");
+		return select(vo);
 	}
-	public ArrayList<BoardVo> select(String findStr, int nowPage){
+	public ArrayList<BoardVo> select(BoardVo vo){
 		
-		this.nowPage = nowPage;
+		this.nowPage = vo.getNowPage();
 		
 		ArrayList<BoardVo> list = new ArrayList<BoardVo>();
 		
 		try{
-			pageCompute(findStr);
+			pageCompute(vo.getFindStr());
 			
 			String sql =
 				  " select * from( "
@@ -205,8 +229,8 @@ public class BoardDao {
 				+ " ) where rnum between ? and ? ";
 			
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, "%" + findStr + "%");
-			ps.setString(2, "%" + findStr + "%");
+			ps.setString(1, "%" + vo.getFindStr() + "%");
+			ps.setString(2, "%" + vo.getFindStr() + "%");
 			ps.setInt(3, startNo);
 			ps.setInt(4, endNo);
 			
@@ -399,15 +423,13 @@ public class BoardDao {
 					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
 					
 					//thumb nail 만들기
-					pb = new ParameterBlock();
-					pb.add(sDirectory + sys);
-					op = JAI.create("fileload", pb);
-					bi = op.getAsBufferedImage();
-					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-					g2d = thumb.createGraphics();
-					g2d.drawImage(bi, 0, 0, 100, 100, null);
-					File file = new File(sDirectory + "thumb_" + sys);
-					ImageIO.write(thumb, "png", file);
+					if(sys.lastIndexOf(".png")>=0 || 
+					   sys.lastIndexOf(".gif")>=0 ||
+					   sys.lastIndexOf(".jpg")>=0){
+					
+						makeThumb(sys);
+					}
+					
 				}
 			}
 			if(r>0){
@@ -501,15 +523,13 @@ public class BoardDao {
 					if(r<1) rMap.put("rs","데이터 저장중 오류 발생");
 					
 					//thumb nail 만들기
-					pb = new ParameterBlock();
-					pb.add(sDirectory + sys);
-					op = JAI.create("fileload", pb);
-					bi = op.getAsBufferedImage();
-					thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-					g2d = thumb.createGraphics();
-					g2d.drawImage(bi, 0, 0, 100, 100, null);
-					File file = new File(sDirectory + "thumb_" + sys);
-					ImageIO.write(thumb, "png", file);
+					if(sys.lastIndexOf(".png")>=0 || 
+					   sys.lastIndexOf(".gif")>=0 ||
+					   sys.lastIndexOf(".jpg")>=0){
+					
+						makeThumb(sys);
+					}
+					
 				}
 			}
 			if(r>0){

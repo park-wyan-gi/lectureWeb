@@ -20,7 +20,7 @@ body{
 request.setCharacterEncoding("utf-8");
 
 String inc = request.getParameter("inc");
-if(inc == null) inc = "./board_servlet/board_list.jsp";
+if(inc == null) inc = "./intro.jsp";
 %>
 
 <div id='main'>

@@ -89,10 +89,10 @@ function goPage(nowPage){
 	<form name='frm_board' method='post'>
 	   <input type='button' name='btnInsert' value='입력'/>
 	   <div id='find'>
-	      <input type='text' size='30' name='findStr' value="${obj.findStr}">
+	      <input type='text' size='30' name='findStr' value="${param.findStr}">
 	      <input type='button' name='btnFind' value='검색'>
 	      <input type='hidden' name='serial' />
-	      <input type='hidden' name='nowPage' value="${obj.nowPage }"/>
+	      <input type='hidden' name='nowPage' value="${dao.nowPage }"/>
 	   </div>
 	</form>
 	

@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@page import="bean.TableCreation"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -25,29 +26,35 @@
 	
 	<%
 		if(!request.getMethod().equals("POST")) return;
-		String msg = "";
+		
 		TableCreation tc = new TableCreation();
 		String[] tNames = request.getParameterValues("tName");
 		if(tNames == null) return;
+		List<String> msg= null;
 		for(String tName : tNames){
 			if(tName.equals("board")){
-				msg += "<li>" + tc.createBoard(tName);
+				msg = tc.createBoard(tName);
 			}
 			else if(tName.equals("board_att")){
-				msg += "<li>" + tc.createBoardAtt(tName);
+				msg = tc.createBoardAtt(tName);
 			}
 			else if(tName.equals("member")){
-				msg += "<li>" + tc.createMember(tName);
+				msg = tc.createMember(tName);
 			}
 			else if(tName.equals("guestbook")){
-				msg += "<li>" + tc.createGuestbook(tName);
+				msg = tc.createGuestbook(tName);
 			}
+			out.print("<ul>");
+			for(String m : msg){
+				out.print("<li>" + m + "</li>");
+			}
+			out.print("</ul>");
 		}
 		
 		
 	%>
 	
-	<%=msg %>
+	
 </div>
 
 <script>

@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TableCreation {
 	Connection conn;
@@ -21,7 +23,7 @@ public class TableCreation {
 
 	}
 
-	public int initTable(String tName){
+	public int checkTable(String tName){
 		int r = 0;
 		try{
 			sql = "select count(*) cnt from user_tables where table_name = '" 
@@ -29,12 +31,11 @@ public class TableCreation {
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			rs.next();
-			int cnt = rs.getInt("cnt");
-			if (cnt >= 1) {
+			r = rs.getInt("cnt");
+			if (r == 1) {//기존 테이블 데이터 초기화
 				sql = "truncate table " + tName;
 				ps = conn.prepareStatement(sql);
 				ps.execute();
-				r=1;//테이블이 있어서 초기화된 경우
 			} else {
 				r=2;//테이블이 없는 경우
 			}
@@ -50,8 +51,11 @@ public class TableCreation {
 		try{
 			sql = "drop sequence " + seqName;
 			ps = conn.prepareStatement(sql);
-			ps.execute();
+			ps.execute();//시퀀스가 없는 경우 예외처리됨.
 		}catch(Exception ex){
+			
+		}finally{
+		
 			sql = "create sequence " + seqName;
 			try {
 				ps = conn.prepareStatement(sql);
@@ -64,15 +68,14 @@ public class TableCreation {
 		return b;
 	}
 	
-	public String createBoard(String tName) {
-		String rs = "";
-		int r=-1;
-		r = initTable(tName);
+	public List<String> createBoard(String tName) {
+		List<String> msg = new ArrayList<String>();
+		int r = checkTable(tName);
 		
 		if( r== -1){
-			rs = "자료실 체크중 예외 발생.";
+			msg.add("자료실 체크중 예외 발생.");
 		}else if ( r==1) {
-			rs = "자료실 테이블이 초기화 되었습니다.";
+			msg.add("자료실 테이블이 초기화 되었습니다.");
 			
 		}else if(r==2){
 			
@@ -90,95 +93,114 @@ public class TableCreation {
 			try{
 				ps = conn.prepareStatement(sql);
 				ps.execute();
-				rs = "자료실 테이블이 정상적으로 생성되었습니다.";
+				msg.add("자료실 테이블이 정상적으로 생성되었습니다.");
 			}catch(Exception ex){
-				rs ="자료실 테이블 생성중 오류 발생";
+				msg.add("자료실 테이블 생성중 오류 발생");
 			}
 		}
+		
 		if(createSequesce("seq_" + tName)){
-			rs += "<li>자료실 시퀀스가  생성되었습니다.</li><br/>";
+			msg.add("자료실 시퀀스가  생성되었습니다.");
 		}else{
-			rs += "<li>자료실 시퀀스 생성중 오류 발생</li><br/>";
+			msg.add("자료실 시퀀스 생성중 오류 발생");
 		}
-		return rs;
+		return msg;
 	}
 
-	public String createBoardAtt(String tName){
-		String rs = "";
+	public List<String> createBoardAtt(String tName){
+		List<String> msg = new ArrayList<String>();
+		
 		int r=0;
-		r = initTable(tName);
+		r = checkTable(tName);
 		
-		if(r == -1){
-			rs = "자료실 첨부 테이블 체크중 예외 발생";
-		}else if (r==1) {
-			rs ="자료실 첨부 테이블이 초기화 되었습니다.";
-		}else if(r==2){
-			sql = "create table board_att(" 
-					+ " serial integer," 
-					+ " pserial integer,"
-					+ " attfile varchar(255),"
-					+ " oriattfile varchar(255)" 
-					+ ")";
-			try{
-				ps = conn.prepareStatement(sql);
-				ps.execute();
-				rs = "자료실 첨부 테이블이 생성되었습니다.";
-			}catch(Exception ex){
-				rs = "자료실 첨부 테이블 생성시 오류 발생'";
+		try{
+			if(r == -1){
+				msg.add("자료실 첨부 테이블 체크중 예외 발생");
+			}else if (r==1) {
+				msg.add("자료실 첨부 테이블이 초기화 되었습니다.");
+			}else if(r==2){
+				sql = "create table board_att(" 
+						+ " serial integer," 
+						+ " pserial integer,"
+						+ " attfile varchar(255),"
+						+ " oriattfile varchar(255)" 
+						+ ")";
+					ps = conn.prepareStatement(sql);
+					ps.execute();
+					msg.add("자료실 첨부 테이블이 생성되었습니다.");
 			}
+		}catch(Exception ex){
+			msg.add("자료실 첨부 테이블 생성시 오류 발생");
 		}
 
 		if(createSequesce("seq_" + tName)){
-			rs += "<li>자료실 첨부테이블의 시퀀스가  생성되었습니다.</li><br/>";
+			msg.add("자료실 첨부테이블의 시퀀스가  생성되었습니다.");
 		}else{
-			rs += "<li>자료실 첨부 테이블의 시퀀스 생성중 오류 발생</li><br/>";
+			msg.add("자료실 첨부 테이블의 시퀀스 생성중 오류 발생.");
 		}
 		
-		return rs;
+		return msg;
 	}
 		
 		
 
-	public String createMember(String tName){
-		String rs = "";
+	public List<String> createMember(String tName){
+		List<String> msg = new ArrayList<String>();
 		int r = -1;
-		r = initTable(tName);
+		r = checkTable(tName);
 		
-		if(r == -1){
-			rs = "회원관리 테이블 체크중 예외 발생";
-		}else if (r==1) {
-			rs = "회원관리 테이블이 초기화되었습니다.";
-		}else if (r==2){
-			sql = "create table member(" 
-					+ " mid varchar(20) primary key,"
-					+ " irum varchar(30),"
-					+ " rDate date,"
-					+ " point integer,"
-					+ " gender char(1),"
-					+ " email varchar(100),"
-					+ " pwd varchar(20),"
-					+ " nicName varchar(50),"
-					+ " post varchar(30),"
-					+ " address1 varchar(100),"
-					+ " address2 varchar(100),"
-					+ " phone varchar(30)"
-					+ ")";
-			
-			try{
-				ps = conn.prepareStatement(sql);
-				ps.execute();
-				rs = "회원관리 테이블이 생성되었습니다.";
-			}catch(Exception ex){
-				rs = "회원관리 테이블 생성중 오류 발생";
+		try{
+			if(r == -1){
+				msg.add("회원관리 테이블 체크중 예외 발생");
+			}else if (r==1) {
+				addMember();
+				msg.add("회원관리 테이블이 초기화되었습니다.");
+			}else if (r==2){
+				sql = "create table member(" 
+						+ " mid varchar(20) primary key,"
+						+ " irum varchar(30),"
+						+ " rDate date,"
+						+ " point integer,"
+						+ " gender char(1),"
+						+ " email varchar(100),"
+						+ " pwd varchar(20),"
+						+ " nicName varchar(50),"
+						+ " post varchar(30),"
+						+ " address1 varchar(100),"
+						+ " address2 varchar(100),"
+						+ " phone varchar(30)"
+						+ ")";
+				
+					ps = conn.prepareStatement(sql);
+					ps.execute();
+					
+					addMember();
+					
+					
+					msg.add("회원관리 테이블이 생성되었습니다.");
 			}
+		}catch(Exception ex){
+			msg.add("회원관리 테이블 생성중 오류 발생");
 		}
 		
-		return rs;
+		return msg;
 		
 	}
 
-	public String createGuestbook(String tName){
-		return "아직 테이블 구성이 완성되지 않았습니다.";
+	public void addMember() throws Exception{
+		sql = "insert into member(mid, pwd) values('manager', 'manager')";
+		ps = conn.prepareStatement(sql);
+		ps.executeUpdate();
+		sql = "insert into member(mid, pwd) values('guest', 'guest')";
+		ps = conn.prepareStatement(sql);
+		ps.executeUpdate();
+	}
+	
+	public List<String> createGuestbook(String tName){
+		List<String> msg = new ArrayList<String>();
+		msg.add("아직 테이블 구성이 완성되지 않았습니다.");
+		
+		return msg;
 	}
 
 	public static void main(String[] args) {

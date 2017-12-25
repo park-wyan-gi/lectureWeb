@@ -22,8 +22,10 @@ public class BoardVo{
 	Map<String, String> attfile; //첨부파일 또는 삭제 파일(key=SystemFileName, value=OriginalFileName)
 	String  email;
 	
+	String part = "";//게시판 구분
 	String findStr="";
-
+	int    nowPage = 1;
+	
 	public BoardVo(){}
 	public BoardVo(int s, String md, String wk, String sub, String cont, int h){
 		this.serial = s;
@@ -34,6 +36,18 @@ public class BoardVo{
 		this.hit = h;
 	}
 	
+	public String getPart() {
+		return part;
+	}
+	public void setPart(String part) {
+		this.part = part;
+	}
+	public int getNowPage() {
+		return nowPage;
+	}
+	public void setNowPage(int nowPage) {
+		this.nowPage = nowPage;
+	}
 	public String getEmail() {
 		return email;
 	}

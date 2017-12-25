@@ -15,9 +15,9 @@
 ${msg }
 <p/>
 <form name='frm_board' method='post'  action = 'list.do'>
-   <input type='hidden' name='serial'       value ="${obj.serial }"/>
-   <input type='hidden' name='nowPage'  value ="${obj.nowPage }"/>
-   <input type='hidden' name='findStr'     value ="${obj.findStr }"/>
+   <input type='hidden' name='serial'       value ="${param.serial }"/>
+   <input type='hidden' name='nowPage'  value ="${param.nowPage }"/>
+   <input type='hidden' name='findStr'     value ="${param.findStr }"/>
    <input type='submit' value='목록으로'/>    
 </form>
 </body>

@@ -115,7 +115,7 @@ public class BoardServlet extends HttpServlet{
 		}else if(uri.indexOf("deleteR.do") >=0){
 			int serial = Integer.parseInt(req.getParameter("serial"));
 			String rs = dao.delete(serial);
-			req.setAttribute("rs",rs);
+			req.setAttribute("msg",rs);
 			
 			dispatcher = req.getRequestDispatcher(url + "delete_result.jsp");
 			dispatcher.forward(req, resp);

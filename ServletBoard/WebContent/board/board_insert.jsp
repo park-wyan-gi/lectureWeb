@@ -50,7 +50,9 @@
          <label>첨부파일</label>
          <span id='attfile'></span>
          <p/>
-         <label> </label>
+         <label>암호 </label>
+         <input type='password' name='pwd' />
+         <p/>
          <input type='submit' value='작성'>
          <input type='button' value='취소' name='btnCancel'>
 	</form>

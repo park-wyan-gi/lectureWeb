@@ -101,21 +101,21 @@ function attfileAppend2(){ //파일추가  Ver 2.0
 <body>
 <div id='board'>
    <h2>게시판 수정(Servlet)</h2>
-   <form name='frm_board' method='post' action='modify.do' enctype='multipart/form-data'>
+   <form name='frm_board' method='post' action='modifyR.do' enctype='multipart/form-data'>
       <label>작성자</label>
-      <input type='text' name='worker' value='${obj.worker }'  readonly><br/>
+      <input type='text' name='worker' value='${vo.worker }'  readonly><br/>
       <label>제목</label>
-      <input type='text' name='subject' value='${obj.subject }' size='70'><br/>
+      <input type='text' name='subject' value='${vo.subject }' size='70'><br/>
       <label></label>
-      <textarea rows="15" cols="72" name='content'>${obj.content }</textarea>
+      <textarea rows="15" cols="72" name='content'>${vo.content }</textarea>
       <br/>
       <label></label>
       <fieldset>
          <legend>첨부된 파일</legend>
-         <c:forEach var='file' items='${obj.attfile }'> 
+         <c:forEach var='file' items='${vo.attfile }'> 
             <div>
-               <label><input type='checkbox' value='${file }' name='deleteFile'>
-                  <img src='../../upload/${file }'  width='50px'>${file } (삭제)
+               <label><input type='checkbox' value='${file.key }' name='deleteAtt'>
+                  <img src='./download/${file.key }'  alt='${file.value }' width='250px'>${file.value } (삭제)
                </label>
             </div>
          </c:forEach>
@@ -125,17 +125,17 @@ function attfileAppend2(){ //파일추가  Ver 2.0
       <label>첨부파일 추가</label><p/>
          <span id='attfile'></span>
          <p/>
-      <label> </label>
-      
+      <label>암호 </label>
+      <input type='password' name='pwd' />
       <p/>
       <label></label>
       <input type='submit' value='수정'  >
       <input type='button' value='상세보기' id='btnView'>
       <input type='button' value='목록으로' id='btnList'>
 
-      <input type='hidden' name='serial' value='${obj.serial }'/>
-      <input type='hidden' name='findStr' value='${obj.findStr }'/>
-      <input type='hidden' name='nowPage' value='${obj.nowPage }'/>
+      <input type='hidden' name='serial' value='${param.serial }'/>
+      <input type='hidden' name='findStr' value='${param.findStr }'/>
+      <input type='hidden' name='nowPage' value='${param.nowPage }'/>
       
    </form>
 </div>

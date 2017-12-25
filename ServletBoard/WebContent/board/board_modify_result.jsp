@@ -14,14 +14,14 @@
 </head>
 <body>
 <h2>게시판 수정(Servlet)</h2>
-${msg }
+${rMap['msg'] }
 <p/>
 <!-- 각 페이지로 이동할때 전달할 기본 정보 -->
 <form name='frm_board' method='post' 
          action='list.do'>
-   <input type='hidden' name='serial'       value ="${obj.serial }"/>
-   <input type='hidden' name='nowPage'  value ="${obj.nowPage }"/>
-   <input type='hidden' name='findStr'     value ="${obj.findStr }"/>
+   <input type='text' name='serial'       value ="${rMap['serial'] }"/>
+   <input type='text' name='nowPage'  value ="${rMap['nowPage'] }"/>
+   <input type='text' name='findStr'     value ="${rMap['findStr'] }"/>
    <input type='submit' value='목록으로'/>
 </form>
 

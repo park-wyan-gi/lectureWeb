@@ -116,18 +116,19 @@ function goPage(nowPage){
 	   </div>
 	</c:forEach>
 	<div id="page">
-	   <c:if test="${page.startPage > 1 }">
+	   <c:if test="${dao.startPage > 1 }">
 	      <input type='button' value="<<" onclick="goPage(1)">
-	      <input type='button' value="<"  onclick="goPage(${page.startPage-1 })">
+	      <input type='button' value="<"  onclick="goPage(${dao.startPage-1 })">
 	   </c:if>
 	   
-	   <c:forEach var='p' begin="${page.startPage }" end="${page.endPage }">
-	      <input type='button' value='${p }' onclick="goPage(${p})">
+	   <c:forEach var='p' begin="${dao.startPage }" end="${dao.endPage }">
+	      <input type='button' value='${p }' ${dao.nowPage == p ? 'disabled':'' } 
+            onclick="goPage(${p})">
 	   </c:forEach>
 	
-	   <c:if test="${page.totPage > page.endPage }" >   
-	      <input type='button' value=">" onclick="goPage(${page.endPage+1 })">
-	      <input type='button' value=">>" onclick="goPage(${page.totPage })">
+	   <c:if test="${dao.totPage > dao.endPage }" >   
+	      <input type='button' value=">" onclick="goPage(${dao.endPage+1 })">
+	      <input type='button' value=">>" onclick="goPage(${dao.totPage })">
 	   </c:if>
 	   
 	</div>

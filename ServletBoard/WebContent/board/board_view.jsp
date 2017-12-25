@@ -48,7 +48,7 @@ function start(){
 	document.getElementById("btnDelete").onclick = function(){
 		var yn = confirm("정말???");
 		if(yn){
-			url = "delete.do";
+			url = "deleteR.do";
 			ff.action = url;
 			ff.submit();
 		}else{
@@ -58,7 +58,7 @@ function start(){
 	}
 	
    document.getElementById("btnModify").onclick = function(){
-	      url = "selectOne.do";
+	      url = "modify.do";
 	      ff.action = url;
 	      ff.submit();
    }
@@ -80,21 +80,21 @@ function start(){
 <body>
 <div id='view'>
    <h2 id='title'>게시판 상세보기</h2>
-   <div><span class='label'>문서번호 </span> ${obj.serial}</div>
-   <div><span class='label'>작성자 </span> <strong>${obj.worker }</strong> 
-   	<span> <a href='#' >${obj.email }</a></span>
-      <span>[ ${obj.mDate }</li> ]</span>
-      <span>  /조회수 : ${obj.hit }</span>
+   <div><span class='label'>문서번호 </span> ${vo.serial}</div>
+   <div><span class='label'>작성자 </span> <strong>${vo.worker }</strong> 
+   	<span> <a href='#' >${vo.email }</a></span>
+      <span>[ ${vo.mDate }</li> ]</span>
+      <span>  /조회수 : ${vo.hit }</span>
    </div>
-   <div><span class='label'>제목 </span> ${obj.subject }</div>
-   <div id='content'>${obj.content }</div>
+   <div><span class='label'>제목 </span> ${vo.subject }</div>
+   <div id='content'>${vo.content }</div>
 	<div>
 	<p >
-      <c:forEach var="item"  items="${obj.attfile }">
+      <c:forEach var="item"  items="${vo.attfile }">
          <c:if test="${ item != 'null'}">
             <span style='display:inline-block;margin-bottom:20px'>
-               <img src='./upload/${item }' width="220px" /><br/>
-               ${item }
+               <img src='./download/${item.key }' width="220px" /><br/>
+               ${item.value }
             </span>
          </c:if>
       </c:forEach>
@@ -108,11 +108,11 @@ function start(){
 
 <!-- 각 페이지로 이동할때 전달할 기본 정보 -->
 <form name='frm_board' method='post'>
-   <input type='hidden' name='serial'       value ="${obj.serial }"/>
-   <input type='hidden' name='nowPage'      value ="${obj.nowPage }"/>
-   <input type='hidden' name='findStr'      value ="${obj.findStr }"/>
-   <input type='hidden' name='grp'          value ="${obj.grp }"/>
-   <input type='hidden' name='deep'         value ="${obj.deep }"/>
+   <input type='hidden' name='serial'       value ="${param.serial }"/>
+   <input type='hidden' name='nowPage'      value ="${param.nowPage }"/>
+   <input type='hidden' name='findStr'      value ="${param.findStr }"/>
+   <input type='hidden' name='grp'          value ="${vo.grp }"/>
+   <input type='hidden' name='deep'         value ="${vo.deep }"/>
    
 </form>
 

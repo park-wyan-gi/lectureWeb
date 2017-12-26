@@ -1,0 +1,114 @@
+@CHARSET "UTF-8";
+body{
+	width: 1000px;
+	margin: 0px auto;
+	overflow-y:scroll;
+}
+/* -------------------------------------------- 
+ member  
+ --------------------------------------------- */
+
+#member #center{
+	overflow: hidden;
+}
+#member #center > div{
+	display:inline-block;
+	vertical-align: top;
+}
+
+#member #aside{
+	float:right;
+}
+
+
+/* -------------------------------------------- 
+ member list 
+ --------------------------------------------- */
+ #list{
+ 	margin-left:40px;
+ }
+  #list{
+ 	border-bottom: 1px solid #aaaaaa;
+ 	margin-bottom:3px;
+ }
+#list > #find_zone{
+	overflow: hidden;
+}
+#list  #find_zone  div{
+	display: inline-block;
+}
+
+#list  #findone > #left{
+}
+
+#list  #find_zone>#right{
+	float:right;
+}
+
+#list #title{
+	background-color: #eeeeee;
+	padding:3px;
+	box-sizing : border-box;
+	margin-top:2px;
+	margin-bottom:3px;
+}
+
+#list #title >span , #list .items > span{
+	display: inline-block;
+}
+
+#list .no,  .items .no{
+	width:60px;
+}
+
+#list .mid,  .items .mid{
+	width:80px;
+}
+
+#list .irum,  .items .irum{
+	width:80px;
+}
+
+#list .phone,  .items .phone{
+	width:150px;
+}
+
+#list .address,  .items .address{
+	width:150px;
+}
+
+/*-----------------------------------
+insert_form
+-------------------------------------*/
+#insert_form{
+	margin-left:40px;
+}
+#insert_form > #frm_insert > label{
+	display: inline-block;
+	width:86px; 
+	
+}
+
+/*-----------------------------------
+modify_form
+-------------------------------------*/
+#member #center > div{
+	display:inline-block;
+	vertical-align: top;
+}
+#modify_form{
+	margin-left:40px;
+}
+#modify_form > #frm_modify > label{
+	display: inline-block;
+	width:86px; 
+	
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+/*---------------------------
+main
+------------------------------*/
+#gb_main a {
+	color:#4444ff;
+	
+}
+/* insert -----------------------------*/
+#gb_insert li{
+	list-style: none;
+}
+#gb_insert .rdate{
+	font-size:11px;
+}
+/*------------------------------------
+목록 부분
+-------------------------------------*/
+#gb_list .items{
+	overflow: hidden;
+}
+#gb_list .items > div {
+	float:left;
+}
+#gb_list .items> .btns{
+	margin-left:10px;
+	margin-top:40px;
+}
+
+
+#gb_list .rdate{
+	font-size:11px;
+}

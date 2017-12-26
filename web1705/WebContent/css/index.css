@@ -1,0 +1,151 @@
+@CHARSET "UTF-8";
+
+/* 전체 적용---------------------- */
+body{
+	width: 1000px;
+	margin: 0px auto;
+	overflow-y:scroll;
+}
+
+
+
+#aside>img{
+	width:150px;height:130px;
+	border:0px;
+	
+}
+
+/* 반응형 지정 ---------------------------*/
+@media screen  and  (min-width:801px){
+		#sub_menu { width: 200px ; }
+		#contents{ width:680px ;}
+		#aside{ width:120px ;  }
+		#aside>img{display:block}
+	}
+	
+	@media screen and (min-width:600px) and (max-width:800px){
+		#sub_menu { width: 200px ; }
+		#contents{ width:800px ; }
+		#aside{ width:100% ;  clear:left}
+		#aside>img{
+				display:inline-block; 
+				vertical-align:top}
+}
+	 
+	@media screen  and (max-width:600px){
+		#sub_menu { width: 100% ; }
+		#contents{ width:100% ; clear:left}
+		#aside{ width:100% ;  clear:left ; overflow:hidden;}
+		#aside>img{ 
+				display:inline-block; 
+				vertical-align:top}
+	
+}
+
+/* login zone ------------------------------*/
+#login{
+	text-align:right;
+	margin-top:5px;
+	
+}
+
+/* header (공통)--------------------------------*/
+#header a{
+	text-decoration: none;
+	color:#ffffff;
+}
+#header a:hover{
+	background-color: #eeeeff;
+}
+
+#header{
+	position:relative;
+	top:-15px;
+	height:300px;
+	box-sizing:border-box;
+	background-image: url(../imgs/back2.png);
+	background-repeat: no-repeat;
+	box-shadow:3px 3px 5px #cccccc;
+	margin-bottom:2px;
+}
+
+#header>h1{ 
+	font-weight:bold;
+	font-family:Castellar;
+	color:#ffffff;
+	margin-left:20px;
+	padding-top:16px;
+	text-shadow:2px 2px 2px #dddddd;
+	}
+	
+/* nav----------------*/
+#nav{
+	text-align:right; 
+	overflow: hidden;
+	position:absolute;
+	top:254px;right:5px;
+}
+
+#nav>span{
+	float:right;
+	height:28px;
+	padding:5px;
+	text-align: center;
+	margin-right:1px;
+	background-color: #092b29;
+	color:#ffffff;
+	font-weight:bold;
+	opacity:.7;
+}
+
+#nav>span:hover{
+	background-color: #aaaaaa;
+	color:#222222;
+	cursor: pointer;
+}
+
+#nav>span:first-child{
+	border-radius:0 5px  5px 0;
+}
+#nav>span:last-child{
+	border-radius:5px 0 0  5px;
+}
+
+
+
+/* contente ------------------------------------*/
+#sub_menu{
+	background-color:#eeeeff;
+	float:left;
+	border:0px solid #eeeeee;
+	border-radius:5px 0 0  5px;
+}
+#contents{
+	float:left;
+	vertical-align:top;
+	padding:10px;
+	box-sizing:border-box;
+}
+#aside{
+	float:left;
+}
+/* main ----------------------------------*/
+#main{
+	margin-top:-10px;
+	overflow: hidden;
+	margin-bottom:6px;
+}
+
+/* footer -------------------------------------*/
+#footer{
+	margin-top:-2px;
+	text-align:center;
+	background-color: #eeeeee;
+	box-shadow:3px 3px 7px #cccccc;
+	padding:20px;
+	height:100px;
+	box-sizing : border-box;
+
+}
+
+

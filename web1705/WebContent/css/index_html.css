@@ -1,0 +1,8 @@
+@CHARSET "UTF-8";
+#index_html  a {
+	color:#3333ff;
+}
+#index_html a:hover{
+	text-decoration: underline;
+	
+}

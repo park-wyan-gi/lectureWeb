@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+#def {
+	border : 2px solid #aaaaaa; /* 선의 굵기, 선의 종류, 선색 */
+	box-shadow : 2px 2px 4px #cccccc; /* 좌우, 상하, 그림자 높이 */
+	background-color : #eeeeee;
+	border-radius : 20px; /*외각선의 라운딩되는 반경 */	
+	padding:10px;
+	border-box:boxing;
+}
+
+

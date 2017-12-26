@@ -1,0 +1,54 @@
+/* 회원 목록에 관한 스타일 */
+@CHARSET "UTF-8";
+
+#header {
+	border-top : 1px solid #aaaaaa;
+	border-bottom : 3px solid #888888;
+	padding:4px;
+	box-sizing:border-box;
+	margin-top:4px;
+	margin-bottom:5px;
+	font-weight:bold;
+	background-color:#eeeeee;
+}
+
+a{
+	text-decoration:none;
+}
+-- span{ border:1px solid #aaaaaa; }
+
+/*조회된 행의 스타일 */
+.list:hover {
+	background-color:#eeeeee;	
+}
+
+/*각 컬럼들의 스타일 */ 
+#header>span{ display: inline-block;}
+.list>span{ 
+	display: inline-block; 
+	margin-right:2px;	
+	padding:4px;}
+
+.no { 
+	width: 30px; 
+	text-align:right;
+	margin-right:10px;  
+}
+.eid{  	width:50px; }	
+.fn{  	width:110px; }
+.ph { 	width:140px; 	margin-right:10px; }
+.em { 	width:100px; }
+.hd{ 	width:100px; }
+.sal{ 	width:80px; 	margin-right:20px; }
+.dc{  	width:80px; }
+.dn{ 	width:140px; }
+.list>.dc{ 	text-align:center; }
+
+
+
+
+
+
+
+
+

@@ -455,7 +455,17 @@ public class BoardMyba {
 		return listSize;
 	}
 
-	public void setListSize(int listSize) {
+	public String getPart() {
+      return part;
+   }
+
+
+   public void setPart(String part) {
+      this.part = part;
+   }
+
+
+   public void setListSize(int listSize) {
 		this.listSize = listSize;
 	}
 

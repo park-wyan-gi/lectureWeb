@@ -46,7 +46,8 @@ function init(){
 
 	if(getId('btnFind') != null){
 		getId('btnFind').onclick=function(){
-			community_form.action = url + 'list.jsp';
+			community_form.action = 'index.do';
+			community_form.nowPage.value = 1;
 			community_form.submit();
 		}
 	}

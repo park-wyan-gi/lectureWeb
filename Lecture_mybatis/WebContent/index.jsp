@@ -95,19 +95,19 @@ if(request.getParameter("inc") != null){// 1) 서브content가 링크된 경우
 	</div>
 	<div id='center'>
 		<div id='left'>
-			<jsp:include page="/board"  flush="false">
+			<jsp:include page="/board"  flush="true">
 				<jsp:param value="board_list.do" name="inc"/>
 			</jsp:include>			
 		</div>
 		
 		<div id='contents'>
-			<jsp:include page="/board"  flush="false">
+			<jsp:include page="/board"  flush="true">
 				<jsp:param value="list.do" name="inc"/>
 			</jsp:include>			
 		
 		</div>
 		<div id='right'>
-			<jsp:include page="/board" flush="false">
+			<jsp:include page="/board" flush="true">
 				<jsp:param value="aside.do" name="inc"/>
 			</jsp:include>
 		</div>

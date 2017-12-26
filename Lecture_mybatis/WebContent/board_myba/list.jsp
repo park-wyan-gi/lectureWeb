@@ -80,15 +80,16 @@
 
 <div id='board_body'>
 
-	<h1>Community List Mybatis (${vo.part })</h1>
+	<h1>Community List Mybatis (${dao.part })</h1>
 	
 	<div style="width:100%">
 		<input type='button' value='게시물입력' id='btnInsert'>
 		<form name='community_form' method='post' id="community_form">
-			<input type='text' name='find' id='find'
+			<input type='text' name='findStr' id='find'
 					value="${param.findStr }">
 			<input type='button' value='검색'  id='btnFind'>
-			<input type='hidden' name='nowPage'>
+			<input type='hidden' name='nowPage'value='${param.nowPage }'>
+         <input type='hidden' name='part' value='${dao.part }'>
 		</form>
 	</div>
 	<div style='text-align:right;font-size:10pt'>

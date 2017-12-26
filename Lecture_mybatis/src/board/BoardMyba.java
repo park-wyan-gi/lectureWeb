@@ -3,27 +3,13 @@ package board;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 public class BoardMyba {
 	private SqlSession session;//커넥션 객체가 생성된 상태
@@ -34,6 +20,7 @@ public class BoardMyba {
 	         
 	int    mSize = 1024*1024*10;
 	String fileEncoding = "utf-8";
+	String part = "default";
 
 	//페이지분리 관련된 필드
 	int listSize = 4; // 한페이지에 보여질 행수
@@ -58,18 +45,35 @@ public class BoardMyba {
 	BufferedImage thumb;
 	Graphics2D g2d;
 
+	HttpServletRequest req;
 	
-	BoardVo vo;
-	
-	public BoardMyba(){
+	public BoardMyba(HttpServletRequest req){
 		try{
+			this.req = req;
 			session = BoardFactory.getFactory().openSession();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}
 	
-	public void computePage(){
+	
+	// board list
+	public List<String> getBrdList(){
+		List<String> list = null;
+		
+		try{
+			list = session.selectList("board.board_list");
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}finally{
+			return list;
+		}
+	}
+	
+	
+	public void computePage(BoardVo vo){
+		totSize = (int)session.selectOne("board.page",vo );
+
 		totPage  = (int)Math.ceil(totSize*1.0 / listSize);
 		totBlock = (int)Math.ceil(totPage*1.0 / blockSize);
 		nowBlock = (int)Math.ceil(nowPage*1.0 / blockSize);
@@ -83,22 +87,40 @@ public class BoardMyba {
 		if(totSize < endNo) endNo = totSize;		
 	}
 	
-	public ArrayList<BoardVo> list(){
-		ArrayList<BoardVo> v = null;
+	public List<BoardVo> list(){
+		
+		System.out.println(part);
+		
+		BoardVo vo = new BoardVo();
+		List<BoardVo> list = null;
+		
+		if(req.getParameter("part") != null){
+			part = req.getParameter("part");
+		}
+		if(req.getParameter("nowPage") != null){
+			nowPage = Integer.parseInt(req.getParameter("nowPage"));
+		}
+		
+		vo.setPart(part);
+		vo.setFindStr(req.getParameter("findStr"));
+		vo.setNowPage(nowPage);
+		
 		try{
-			totSize = (int)session.selectOne("board.page",vo );
-			computePage();
-			
-			v = (ArrayList)session.selectList("board.select", vo);
+			computePage(vo);
+
+			vo.setStartNo(startNo);
+			vo.setEndNo(endNo);
+
+			list = (ArrayList)session.selectList("board.select", vo);
 
 			session.close();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
 		
-		return v;
+		return list;
 	}
-	
+	/*	
 	public BoardVo view(){
 		BoardVo v = null;
 		try{
@@ -424,27 +446,8 @@ public class BoardMyba {
 		}
 	}
 	
-	
-	// board list
-	public List<String> getBrdList(){
-		List<String> list = null;
-		
-		try{
-			list = session.selectList("board.brd_list");
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}finally{
-			return list;
-		}
-	}
+*/	
 
-	public BoardVo getVo() {
-		return vo;
-	}
-
-	public void setVo(BoardVo vo) {
-		this.vo = vo;
-	}
 
 	//페이지 분리와 관련된 메서드
 

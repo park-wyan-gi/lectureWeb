@@ -4,13 +4,14 @@
 <%@page import="java.util.Vector"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>community(list)</title>
-<link rel='Stylesheet' type='text/css' href='./board_myba/board.css'></link>
-<script src='./board_myba/board.js'></script>
+<link rel='Stylesheet' type='text/css' href='./css/board.css'></link>
+<script src='./js/board.js'></script>
 
 <style>
 #board_body{
@@ -76,52 +77,22 @@
 </style>
 </head>
 <body>
-<jsp:useBean id="boardVo" class="board.BoardVo"/>
-<jsp:setProperty property="*" name="boardVo"/>
-<%
-// 검색어 세션처리
-if(request.getMethod().equals("POST")){
-	session.setAttribute("find", boardVo.getFind());
-}else{
-	if(session.getAttribute("find") != null){
-		boardVo.setFind((String)session.getAttribute("find"));
-	}
-}
-// 페이지 정보 유지
-if(request.getParameter("nowPage")==null){
-	if(session.getAttribute("nowPage") != null)
-		boardVo.setNowPage((Integer)session.getAttribute("nowPage"));
-}else{
-	session.setAttribute("nowPage", boardVo.getNowPage());
-}
-
-//게시판의 종류 선별
-String part = "notice";
-if(!boardVo.getPart().equals("")) part = boardVo.getPart();
-
-BoardMyba board = new BoardMyba();
-board.setVo(boardVo);
-board.setNowPage(boardVo.getNowPage());
-
-ArrayList<BoardVo> v = board.list();
-
-%>
 
 <div id='board_body'>
 
-	<h1>Community List Mybatis (<%=part %>)</h1>
+	<h1>Community List Mybatis (${vo.part })</h1>
 	
 	<div style="width:100%">
 		<input type='button' value='게시물입력' id='btnInsert'>
 		<form name='community_form' method='post' id="community_form">
 			<input type='text' name='find' id='find'
-					value="<%=boardVo.getFind()%>">
+					value="${param.findStr }">
 			<input type='button' value='검색'  id='btnFind'>
 			<input type='hidden' name='nowPage'>
 		</form>
 	</div>
 	<div style='text-align:right;font-size:10pt'>
-		총 건수 : <%=board.getTotSize() %>
+		총 건수 : ${dao.totSize }
 	</div>
 	
 	<div>
@@ -133,43 +104,37 @@ ArrayList<BoardVo> v = board.list();
 			<div class='item5'>조회수</div>
 		</div>
 		
-		<% for(int i=0 ; i<v.size() ; i++){ 
-			BoardVo vo = v.get(i);
-			int pad = (vo.getDeep().split("-")).length;
-			String temp="";
-			for(int j=2; j<pad*2 ; j++) temp += "&nbsp;";
-			if(!temp.equals("")) temp += "└";
-			
-		%>
+		
 		<div class='list_item_block'>
-			<div class='item1'><%=vo.getSerial() %></div>
-			
-			<div class='item2'>
-				<a href='#' onclick = 'view(<%=vo.getSerial()%>)'>
-					<%=temp%><%=vo.getSubject() %>
-				</a></div>
-				
-				
-			<div class='item3'><%=vo.getMid() %></div>
-			<div class='item4'><%=vo.getMdate() %></div>
-			<div class='item5'><%=vo.getHit() %></div>
+			<c:forEach var='data' items="${list }">
+				<div class='item1'>${data.serial }</div>
+				<div class='item2'>
+					<a href='#' onclick = 'view(${data.serial})'>
+						${data.subject }
+					</a>
+				</div>
+				<div class='item3'>${data.worker }</div>
+				<div class='item4'>${data.mdate }</div>
+				<div class='item5'>${data.hit }</div>
+			</c:forEach>
 		</div>
-		<%} %>
+		
 	</div>
+	
 	<div id='list_location_btn'><!-- 페이지 분리 영역 -->
-		<%if(board.getNowBlock()>1){ %>
+		<c:if test="${dao.nowBlock > 1 }">
 			<input type='button' value='맨첨' onclick='goPage(1)' class='btnLeft'>
-			<input type='button' value='이전' onclick='goPage(<%=board.getStartPage()-1%>)' class='btnLeft'>
-		<%} %>
+			<input type='button' value='이전' onclick='goPage(${dao.startPage-1})' class='btnLeft'>
+		</c:if>
 		
-		<%for(int p=board.getStartPage() ; p<=board.getEndPage() ; p++){ %>
-			<input type='button' value='<%=p %>' class='btnGo' onclick='goPage(<%=p%>)'>
-		<%} %>
+		<c:forEach var='p' begin="${dao.startPage }" end = "${dao.endPage }">
+			<input type='button' value='${p }' class='btnGo' onclick='goPage(${p})'>
+		</c:forEach>
 		
-		<%if(board.getNowBlock() < board.getTotBlock()){ %>
-			<input type='button' value='다음' onclick='goPage(<%=board.getEndPage()+1%>)' class='btnRight'>
-			<input type='button' value='맨끝' onclick='goPage(<%=board.getTotPage()%>)' class='btnRight'>
-		<%} %>
+		<c:if test="${dao.nowBlock < dao.totBlock }">
+			<input type='button' value='다음' onclick='goPage(${dao.endPage+1})' class='btnRight'>
+			<input type='button' value='맨끝' onclick='goPage(${dao.totPage})' class='btnRight'>
+		</c:if>
 	</div>
 
 	

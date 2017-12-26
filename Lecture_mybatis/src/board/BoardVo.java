@@ -17,6 +17,30 @@ public class BoardVo {
 	private String email="";
 	
 	private String findStr= "";
+	private int    nowPage=0;
+	
+	private int    startNo;
+	private int    endNo;
+	
+	
+	public int getStartNo() {
+		return startNo;
+	}
+	public void setStartNo(int startNo) {
+		this.startNo = startNo;
+	}
+	public int getEndNo() {
+		return endNo;
+	}
+	public void setEndNo(int endNo) {
+		this.endNo = endNo;
+	}
+	public int getNowPage() {
+		return nowPage;
+	}
+	public void setNowPage(int nowPage) {
+		this.nowPage = nowPage;
+	}
 	private Map<String, String> attFile;
 	public int getSerial() {
 		return serial;

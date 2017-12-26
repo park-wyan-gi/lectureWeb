@@ -26,8 +26,8 @@
     <select id='page' parameterType="board.BoardVo" resultType='java.lang.Integer'>
 		select NVL(count(*),0) from board
 		where(
-			worker like '%${find}%' or subject like '%${find}%' 
-			or content  like '%${find}%'
+			worker like '%${findStr}%' or subject like '%${findStr}%' 
+			or content  like '%${findStr}%'
 		)
 		and part=#{part}
     </select>
@@ -35,8 +35,8 @@
      	select * from (
 		  select rownum no, a.* from( 
 			select * from board 
-			  where (worker like '%${find}%' or subject like '%${find}%' or  
-			  		 content  like'%${find}%' ) 
+			  where (worker like '%${findStr}%' or subject like '%${findStr}%' or  
+			  		 content  like'%${findStr}%' ) 
 			  and part=#{part} 
 			  order by grp desc, deep asc )a
 			  ) where no between ${startNo} and ${endNo}
@@ -56,8 +56,8 @@
 
     </select>
     
-    <select id='brd_list' resultType="board.BrdListVo">
-    	select * from board_att
+    <select id='board_list' resultType="String">
+    	select distinct part from board
     </select>
    
    

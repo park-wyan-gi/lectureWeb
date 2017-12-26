@@ -3,7 +3,9 @@
 <%@page import="board.BoardMyba"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -11,24 +13,20 @@
 
 </head>
 <body>
-<%
-BoardMyba bm = new BoardMyba();
-ArrayList al = (ArrayList)bm.getBrdList();
-%>
-<h1>COMMUNITY</h1>
-게시판 갯수 : <%=al.size() %>
+<H3>Community</H3>
 <ul>
-<% for(int i=0; i<al.size() ; i++){
-		BrdListVo v = (BrdListVo)al.get(i);	
-	%>
-
-	<li><a href='#' onclick="goBoard('<%=v.getBrdName()%>')"><%=v.getBrdName() %></a>
-<!-- 	<li><a href='#' onclick="goBoard('qa')">QnA</a>
+	<c:forEach var='data' items="${board_list }">
+		<li><a href='#' onclick="goBoard('${data}')">${data }</a></li>		
+	</c:forEach>
+	<li><a href='#' onclick="goBoard('qa')">QnA</a>
 	<li><a href='#' onclick="goBoard('faq')">FAQ</a>
-	<li><a href='#' onclick="goBoard('board')">Board</a>
-	-->
-<%}%>
 	
 </ul>
+ 	
+<form name='board_list' method='post'>
+	<input type='hidden' name='part' />
+</form>
+	
+
 </body>
 </html>

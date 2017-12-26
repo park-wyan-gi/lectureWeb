@@ -10,7 +10,7 @@
 function getId(id){ return document.getElementById(id)}
 
 var url= 'index.jsp?inc_content=./board_myba/';
-var part = 'board';
+var part = 'default';
 
 //-----------------------------------
 // 게시판 종류 설정 및 선택
@@ -127,6 +127,9 @@ function goPage(page){
 // 게시판 종류 선택
 //------------------------------------
 function goBoard(part){
-	location.href = url + 'list.jsp&nowPage=1&part=' + part; 
+	var frm = document.board_list;
+	frm.action="index.do";
+	frm.part.value = part;
+	frm.submit();
 }
 

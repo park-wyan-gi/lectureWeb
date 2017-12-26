@@ -10,10 +10,16 @@ public class DBConnect {
 	String driver = "oracle.jdbc.driver.OracleDriver";
 	//연결하려고 하는 DB 서버주소
 	//String url="jdbc:oracle:thin:@서버주소:포트번호:SID";
+	
+	/*
 	String url="jdbc:oracle:thin:@localhost:1521:xe";
-	//String url="jdbc:oracle:thin:@192.168.0.18:1521:orcl";
 	String user="hr";
 	String pwd="hr";
+	*/
+	
+	String url="jdbc:oracle:thin:@192.168.0.18:1521:orcl";
+	String user="hr";
+	String pwd="HR";
 	
 	
 	public DBConnect() {

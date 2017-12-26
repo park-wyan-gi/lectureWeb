@@ -27,8 +27,9 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import bean.DBConnect;
 
 public class BoardDao {
-   String sDirectory = "C:/Users/jobtc/git/lectureWeb/ServletBoard/WebContent/download/";
-   // "C:/Users/JHTA/git/lectureWeb/Servlet1705/WebContent/download/";
+   String sDirectory = 
+		   //"C:/Users/jobtc/git/lectureWeb/ServletBoard/WebContent/download/";
+    		"C:/Users/JHTA/git/lectureWeb/ServletBoard/WebContent/download/";
    int mSize = 1024 * 100000;
 
    Connection conn;

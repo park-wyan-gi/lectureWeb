@@ -89,7 +89,8 @@ public class TableCreation {
 					+ " hit integer," 
 					+ " pwd varchar(20),"
 					+ " grp integer," 
-					+ " deep varchar(255))";
+					+ " deep varchar(255)),"
+					+ " part varchar(50) default 'default'";
 			try{
 				ps = conn.prepareStatement(sql);
 				ps.execute();

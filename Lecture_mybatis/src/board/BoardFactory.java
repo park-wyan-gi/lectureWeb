@@ -13,7 +13,7 @@ public class BoardFactory {
 	
 	static{
 		try{
-			Reader reader=Resources.getResourceAsReader("config2.xml");
+			Reader reader=Resources.getResourceAsReader("config.xml");
 			factory = new SqlSessionFactoryBuilder().build(reader);
 			
 		}catch(Exception ex){

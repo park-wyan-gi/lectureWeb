@@ -38,4 +38,20 @@
 	<select id='list' parameterType='begin.BeginVo' resultMap='beginMap'>
 		select * from student where mid like #{mid}
 	</select>
+	
+	<!-- if test -->
+	<select id='if_test1' />
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </mapper>   

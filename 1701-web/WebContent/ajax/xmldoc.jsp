@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<%@ page language="java" contentType="text/xml; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<members>
+	<member>
+		<name>홍길동</name>
+		<addr>서울</addr>
+		<phone>010-1111-11111</phone>
+	</member>
+	<member>
+		<name>이길동</name>
+		<addr>부산</addr>
+		<phone>010-1111-2222</phone>
+	</member>
+	<member>
+		<name>성춘향</name>
+		<addr>전라도</addr>
+		<phone>010-1111-3333</phone>
+	</member>
+	<member>
+		<name>임걱정</name>
+		<addr>제주</addr>
+		<phone>010-1111-4444</phone>
+	</member>
+	<member>
+		<name>이몽룡</name>
+		<addr>대전</addr>
+		<phone>010-1111-5555</phone>
+	</member>
+</members>

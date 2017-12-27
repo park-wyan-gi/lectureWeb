@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="dynamic">
+	<resultMap type="bean.DynamicVo" id="dynamicMap">
+		<result property="month" column="mDate"/>
+		<result property="worker" column="worker"/>
+	</resultMap>
+	
+	
+	<select id='if' parameterType='bean.DynamicVo'
+	                resultMap = 'dynamicMap'>
+
+		select * from board  
+		<if test = 'month != null or worker != null'>
+			where
+		</if>
+		<if test='month != null'>
+		 	to_char(mdate, 'mm') = #{month}
+		</if>
+		<if test = 'month != null and worker != null'>
+			and 
+		</if>
+		<if test='worker != null'>
+		 	worker = #{worker}
+		</if>
+	                
+  </select>
+
+	<select id='choose' parameterType='bean.DynamicVo'
+	                    resultMap = 'dynamicMap'>
+
+		select * from board 
+		<choose>
+			<when test="month != null">
+				where to_char(mdate, 'mm') = #{month}
+			</when>
+			<when test="worker != null">
+				where worker = #{worker}
+			</when>
+		</choose>
+	</select>
+	
+	<select id='foreach' parameterType='bean.DynamicVo2'
+											 resultMap = 'dynamicMap'>
+
+		select * from board
+		
+		<where> 
+			<if test='worker != null'>
+				worker in 
+				<foreach open="(" close=")" separator=","
+				         item='data' index='index' collection='worker'> 
+					#{data}
+				</foreach>
+			</if>
+			
+			<if test='month != null'>
+				 or to_char(mdate, 'mm') in
+				<foreach open="(" close=")" separator=","
+				         item='data' index='index' collection='month'> 
+					#{data}
+				</foreach>
+			</if>
+		</where>
+
+	</select>											 
+</mapper>	
+
+
+
+

@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+/* 화면의 넓이가 최대 400px일때 까지 */
+
+#d1{
+	background-color: #8888ff;
+	border-radius:7px;
+}
+#d2{
+	background-color: #ffffaa;
+	border-radius:7px;
+}
+#d3{
+	background-color: #ffaaff;
+	border-radius:7px;
+}
+#d4{
+	background-color: #aaffff;
+	border-radius:7px;
+}
+#d5{
+	background-color: #aaaaaa;
+	border-radius:7px;
+}

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	<resultMap type="bean.BoardVo" id="boardMap"/>	
+
+	<select id='list' resultMap="boardMap" parameterType="bean.BoardVo">
+		select * from board 
+		where subject like '%${findStr}%' or content like '%${findStr}%'
+		order by grp desc, deep asc 
+	</select>
+
+
+
+	<select id="count" resultType="int">
+		select count(*) cnt from member
+	</select>
+	
+	<!-- 아이디를 전달받아 암호를 반환 -->
+	<select id="getPwd" resultType="String" parameterType="String">
+		select userpwd from member where userid=#{id}
+	</select>
+	
+	<select id="getSubject" resultType="String" parameterType="int">
+		select subject from board where serial=#{serial}
+	</select>
+	
+	<!-- 게시판 작성자중 홍길동이 있으면 참, 없으면 거짓 -->
+	<select id='worker' resultType='boolean' parameterType='String'>
+		select 
+			case when count(*)>0 
+			  then 1 
+			  else 0
+			end result
+		from board
+		where worker=#{worker} 
+	
+	</select>
+	
+	<!-- 시리얼에 해당하는 한행 전체를 Object형에 담아 리턴-->
+	<select id="board" resultType='bean.BoardVo' 
+	                   parameterType="bean.BoardVo">
+		select * from board where serial=#{serial}
+	
+	</select>
+	
+	<!-- 게시판과 관계된 쿼리들 -->
+	<select id='brd_list' resultMap="boardMap" parameterType="bean.BoardVo">
+		select * from board 
+		where subject like '%${findStr}%' or content like '%${findStr}%'
+		order by grp desc, deep asc 
+	</select>
+	
+	
+	<insert id="brd_insert"
+					parameterType='bean.BoardVo'>
+		insert into 
+			board(serial, mdate, worker, subject, content,
+			      hit, grp, deep) 
+			values(
+				seq_board_serial.nextval, sysdate, #{worker},
+				#{subject}, #{content}, 0, 
+				seq_board_serial.currval, 
+				seq_board_serial.currval)
+	
+	</insert>
+	<select id="brd_view" resultType='bean.BoardVo' 
+	                   parameterType="bean.BoardVo">
+		select * from board where serial=#{serial}
+	
+	</select>
+	
+	<update id="brd_modify" parameterType="bean.BoardVo">
+		update board 
+		set    subject=#{subject} , content=#{content}
+		where  serial=#{serial}
+	</update>
+	
+	<delete id="brd_delete" parameterType="bean.BoardVo">
+		delete from board
+		where  serial= #{serial}
+	</delete>
+	
+	<!--  게시판 댓글 처리 -->
+	<insert id="brd_repl" parameterType="bean.BoardVo">
+		insert into board(serial, mdate, worker, 
+				    subject, content,
+			      hit, grp, deep)
+	  values(
+	  	seq_board_serial.nextval, sysdate, #{worker},
+	  	     #{subject}, #{content},
+	  	     0, #{grp}, #{deep} ||'-'|| seq_board_serial.currval 
+	  )
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+	

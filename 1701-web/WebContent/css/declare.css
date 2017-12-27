@@ -1,0 +1,25 @@
+@CHARSET "UTF-8";
+#cl-dashboard{
+	display: none;
+}
+.title{
+	background-color: #dddddd;
+	padding:8px;
+	box-sizing: border-box;
+	
+	border-color:#aaaaaa;
+	border-top-width: 2px;
+	border-top-style:solid;
+	
+	border-bottom-width:2px;
+	border-bottom-style:solid;
+}
+.item{
+	display:inline-block;
+	width:100px;
+}
+
+.phone{
+	width:200px;
+	
+}

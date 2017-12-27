@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+/*화면의 넓이가 400~600px일 때 */
+
+#main > div {
+	display:inline-block;
+	
+}
+#d1{
+	background-color: #8888ff;
+	border-radius:7px;
+	width:49%;
+}
+#d2{
+	background-color: #ffffaa;
+	border-radius:7px;
+	width:48%;
+}
+#d3{
+	background-color: #ffaaff;
+	border-radius:7px;
+	width:49%;
+}
+#d4{
+	background-color: #aaffff;
+	border-radius:7px;
+	width:48%;
+}
+#d5{
+	background-color: #aaaaaa;
+	border-radius:7px;
+	width:99%;
+}

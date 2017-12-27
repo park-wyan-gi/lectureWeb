@@ -112,6 +112,7 @@ public class BoardMyba {
 			vo.setEndNo(endNo);
 
 			list = (ArrayList)session.selectList("board.select", vo);
+			
 
 			session.close();
 		}catch(Exception ex){
